@@ -34,26 +34,24 @@ engine. [Methods and raw results](pi5/PERFORMANCE.md).
 
 ## Install
 
+1. Download the latest install package from [releases](https://github.com/PhilAnderson1/minicpm-pi5/releases/latest) and install it with:
 
-Download the latest install package from [releases](https://github.com/PhilAnderson1/minicpm-pi5/releases/latest).
+   ```sh
+   sudo apt install ./minicpm-pi5_0.1.0_arm64.deb
+   ```
 
-```sh
-# 1. Create the model directory
-sudo install -d -m 0755 /opt/minicpm-pi5/models
+2. Download the model:
 
-# 2. Download the model
-sudo curl -fL https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/main/MiniCPM5-2B-Q4_K_M.gguf \
-  -o /opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf
+   ```sh
+   sudo curl -fL https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/main/MiniCPM5-2B-Q4_K_M.gguf \
+     -o /opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf
+   ```
 
-# 3. Download the installer
-curl -fLO https://github.com/PhilAnderson1/minicpm-pi5/releases/download/v0.1.0/minicpm-pi5_0.1.0_arm64.deb
+3. Start the server:
 
-# 4. Install
-sudo apt install ./minicpm-pi5_0.1.0_arm64.deb
-
-# 5. Start
-sudo systemctl start minicpm-pi5
-```
+   ```sh
+   sudo systemctl start minicpm-pi5
+   ```
 
 Open **http://localhost:8080** on the Pi or connect your client to port 8080. Settings: `/etc/default/minicpm-pi5`.
 The service starts automatically on subsequent boots.
