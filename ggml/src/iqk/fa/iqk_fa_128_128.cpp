@@ -3,6 +3,7 @@
 #if defined IQK_IMPLEMENT && defined GGML_IQK_FLASH_ATTENTION
 
 #include "iqk/fa/iqk_fa_templates.h"
+#include "iqk/fa/iqk_fa_128_value.h"
 
 IQK_FA_CASE(iqk_fa_128_128) {
 
