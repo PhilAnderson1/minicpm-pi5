@@ -51,72 +51,37 @@ the rows are not one combined before/after benchmark and gains should not be add
 Generation still slows as context grows. Results are not promises for other
 models or machines. [Methods, raw data and rejected experiments](pi5/PERFORMANCE.md).
 
-## Build and run
+## Install
 
-Use 64-bit ARM Linux on a Pi 5. On Debian/Raspberry Pi OS, install the usual
-build tools (`git`, `cmake`, `build-essential`) and Python 3 for the HTTP checks.
-The preset targets Cortex-A76 and builds with two compiler jobs by default.
-Do not compile or benchmark concurrently with a model server on a 4 GB machine.
+Raspberry Pi 5, 64-bit Debian 13 / Raspberry Pi OS Trixie. Stop any other model
+server first.
 
-```sh
-git clone https://github.com/PhilAnderson1/minicpm-pi5.git
-cd minicpm-pi5
-./pi5/build.sh
-./pi5/serve.sh /path/to/MiniCPM5-2B-Q4_K_M.gguf
-```
-
-Obtain the model separately and follow its distributor's license. No model
-weights are included. The exact tested GGUF has SHA256:
-
-```text
-ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd
-```
-
-The launcher uses CPU inference, runtime weight repacking, `-t 2 -tb 4`, one
-slot, **24,576 context tokens**, **1,024 MiB prompt cache**, FP16 KV, and Jinja.
-It binds to `127.0.0.1:8080`. Set `PORT` or `HOST` to change the binding; additional
-server arguments can follow the model path. The preset does not configure
-network authentication—keep it on loopback unless you arrange appropriate access.
-
-`MINICPM_PI5_BUILD_DIR` overrides the build directory in all helper scripts.
-`JOBS` controls build parallelism. OpenMP binding is set to `close`, with core
-places and passive waiting, matching the experiments.
-
-## Debian installer
-
-A mostly static **arm64 / Raspberry Pi 5** package can be built with
-`./pi5/build-deb.sh`. It installs a dedicated service account, configuration and a
-systemd unit enabled on first install but left stopped. Installation prints model
-download/checksum instructions for `/opt/minicpm-pi5/models/`.
-See the [package guide](pi5/debian/README.md) for OS requirements, build commands
-and the installation tests required before a binary release.
-
-## Validate
-
-Stop any existing model server first. These commands do not manage systemd:
+The `.deb` is built locally; the download below will work once release `v0.1.0`
+is published.
 
 ```sh
-./pi5/build-tests.sh
-export OMP_PROC_BIND=close OMP_PLACES=cores OMP_WAIT_POLICY=PASSIVE
-./build-pi5-tests/integration_test /path/to/model.gguf short
-./build-pi5-tests/decode_check /path/to/model.gguf 1024 8192 15360
-python3 pi5/tests/http_smoke.py --model /path/to/model.gguf
+# 1. Create the model directory
+sudo install -d -m 0755 /opt/minicpm-pi5/models
+
+# 2. Download the model
+sudo curl -fL https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/main/MiniCPM5-2B-Q4_K_M.gguf \
+  -o /opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf
+
+# 3. Download the installer
+curl -fLO https://github.com/PhilAnderson1/minicpm-pi5/releases/download/v0.1.0/minicpm-pi5_0.1.0_arm64.deb
+
+# 4. Install
+sudo apt install ./minicpm-pi5_0.1.0_arm64.deb
+
+# 5. Start
+sudo systemctl start minicpm-pi5
 ```
 
-The HTTP runner starts and stops its own server on port **8081** and compares
-saved-cache output with equivalent live replay, including stream cancellation.
-`--full` adds a real 24,500-token prefill and restore; allow about 20–30 minutes.
-Without `short`, `integration_test` also tests long-context cancellation and a
-24K state roundtrip, temporarily writing about 1 GiB under `$TMPDIR` (or `/tmp`).
+Open **http://localhost:8080** on the Pi. Settings: `/etc/default/minicpm-pi5`.
+The service starts automatically on subsequent boots.
 
-For current-build prefill measurements:
-
-```sh
-./build-pi5-tests/prefill_check /path/to/model.gguf 23552 128
-```
-
-This uses synthetic retained KV and measures only incremental prefill. See the
-[validation guide](pi5/VALIDATION.md) before interpreting timings.
+[Build from source](pi5/BUILD.md) · [Build the installer](pi5/debian/README.md) ·
+[Run tests](pi5/VALIDATION.md)
 
 ## Limitations
 

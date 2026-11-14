@@ -1,4 +1,4 @@
-# Debian package
+# Build the Debian package
 
 Build on a Raspberry Pi 5 running a 64-bit Debian-family OS:
 
@@ -31,7 +31,7 @@ The package installs:
 - `/etc/default/minicpm-pi5`: preserved configuration, including model, port,
   context and prompt-cache budget.
 - `/usr/lib/systemd/system/minicpm-pi5.service`: a dedicated unprivileged service.
-- `/usr/share/doc/minicpm-pi5/SETUP.txt`: download/checksum/start instructions,
+- `/usr/share/doc/minicpm-pi5/SETUP.txt`: model download and startup instructions,
   also printed after installation.
 
 First installation creates a no-login `minicpm-pi5` system account and enables
@@ -39,7 +39,8 @@ the unit without starting it. Missing/unreadable weights make ExecCondition skip
 startup, including after reboot. Defaults expect weights at
 `/opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf` and listen on localhost:8080.
 The service can read but cannot modify the model directory. The upstream model
-URL and SHA256 in SETUP.txt matched the tested model when checked on 2026-11-14.
+URL matched the tested model when checked on 2026-11-14. The tested SHA256 is
+`ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd`.
 
 Upgrades preserve enablement and configuration and do not start, stop or restart
 a running server. A running process keeps its old executable until an explicit
