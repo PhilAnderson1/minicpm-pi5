@@ -35,8 +35,7 @@ engine. [Methods and raw results](pi5/PERFORMANCE.md).
 ## Install
 
 
-Raspberry Pi 5, 64-bit Debian 13 / Raspberry Pi OS Trixie. Stop any other model
-server first.
+[Download the latest release .deb](https://github.com/PhilAnderson1/minicpm-pi5/releases/latest).
 
 ```sh
 # 1. Create the model directory
