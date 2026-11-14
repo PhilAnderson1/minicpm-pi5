@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+if [ "$1" = purge ]; then
+    deb-systemd-helper purge minicpm-pi5.service >/dev/null
+fi
+case "$1" in
+    remove|purge)
+        if [ -d /run/systemd/system ]; then
+            systemctl --system daemon-reload
+        fi
+        ;;
+esac
+# Retain the system account and externally downloaded models, even on purge.

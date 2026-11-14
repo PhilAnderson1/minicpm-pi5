@@ -82,6 +82,15 @@ network authentication—keep it on loopback unless you arrange appropriate acce
 `JOBS` controls build parallelism. OpenMP binding is set to `close`, with core
 places and passive waiting, matching the experiments.
 
+## Debian installer
+
+A mostly static **arm64 / Raspberry Pi 5** package can be built with
+`./pi5/build-deb.sh`. It installs a dedicated service account, configuration and a
+systemd unit enabled on first install but left stopped. Installation prints model
+download/checksum instructions for `/opt/minicpm-pi5/models/`.
+See the [package guide](pi5/debian/README.md) for OS requirements, build commands
+and the installation tests required before a binary release.
+
 ## Validate
 
 Stop any existing model server first. These commands do not manage systemd:

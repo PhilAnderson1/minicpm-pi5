@@ -1,0 +1,31 @@
+MiniCPM Pi 5 is installed. Installation does not start or restart the server.
+On first install the service is enabled for boot. It skips startup if the model
+is missing. Upgrades preserve the existing enabled/disabled state.
+
+Requires a Raspberry Pi 5 and a 64-bit OS satisfying the package dependencies.
+The default 24K context plus 1 GiB prompt cache is tight on a 4 GB Pi.
+
+Download the official Apache-2.0 model and verify it before installing:
+
+  curl --fail --location --output MiniCPM5-2B-Q4_K_M.gguf.part \
+    https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/main/MiniCPM5-2B-Q4_K_M.gguf
+  echo 'ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd  MiniCPM5-2B-Q4_K_M.gguf.part' | sha256sum --check && \
+    sudo install -o root -g root -m 0644 MiniCPM5-2B-Q4_K_M.gguf.part /opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf
+
+Only proceed if the checksum and installation succeeded. The download is about
+1.56 GB; copying it requires space for both the download and installed model.
+Model licence: https://huggingface.co/openbmb/MiniCPM5-2B-GGUF
+
+Review /etc/default/minicpm-pi5. Defaults: localhost:8080, 24576 context tokens,
+1024 MiB prompt cache. Stop any existing inference service using this port or RAM
+before starting this one. Then:
+
+  sudo systemctl start minicpm-pi5.service
+  systemctl status minicpm-pi5.service
+  journalctl -u minicpm-pi5.service -n 50
+
+After an upgrade, restart manually when ready to use the new binary:
+  sudo systemctl restart minicpm-pi5.service
+
+Removal/purge preserves model files and the service account.
+These instructions remain at /usr/share/doc/minicpm-pi5/SETUP.txt.

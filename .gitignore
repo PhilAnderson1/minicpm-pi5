@@ -170,3 +170,5 @@ a.out.*
 *.gguf.part
 .env
 .env.*
+
+/pi5/debian/__pycache__/

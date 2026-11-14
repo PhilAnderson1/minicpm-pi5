@@ -1,0 +1,21 @@
+[Unit]
+Description=MiniCPM inference for Raspberry Pi 5
+After=network.target
+
+[Service]
+Type=simple
+User=minicpm-pi5
+Group=minicpm-pi5
+EnvironmentFile=/etc/default/minicpm-pi5
+Environment=OMP_PROC_BIND=close OMP_PLACES=cores OMP_WAIT_POLICY=PASSIVE
+ExecCondition=/usr/bin/test -r ${MODEL}
+ExecStart=/usr/lib/minicpm-pi5/llama-server -m ${MODEL} --alias MiniCPM5 -ngl 0 -t 2 -tb 4 -c ${CONTEXT} -np 1 -rtr --pi5-minicpm --jinja --cache-ram ${CACHE_MIB} --host ${HOST} --port ${PORT}
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

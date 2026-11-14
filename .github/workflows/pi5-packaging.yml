@@ -19,4 +19,7 @@ jobs:
           ./pi5/build.sh --help
           ./pi5/serve.sh --help
           ./pi5/build-tests.sh --help
+          ./pi5/build-deb.sh --help
+          python3 pi5/debian/package.py --help
+          python3 pi5/debian/test_packaging.py
           git diff --check

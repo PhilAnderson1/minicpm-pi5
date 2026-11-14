@@ -1,0 +1,6 @@
+# systemd EnvironmentFile syntax; no shell expansion.
+MODEL=/opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf
+HOST=127.0.0.1
+PORT=8080
+CONTEXT=24576
+CACHE_MIB=1024
