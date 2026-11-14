@@ -12,3 +12,6 @@ runtime configuration. See ../PERFORMANCE.md for baselines and limitations.
 No model weights, raw tensor dumps, prompts, hostname, absolute local paths or
 private profiling libraries are included. Experimental selectors in CSVs refer
 to historical private builds; there are no such global switches in this engine.
+
+- `prefill-total/`: direct baseline versus final-engine prefill comparison,
+  including raw samples, provenance and reproduction instructions.

@@ -3,7 +3,8 @@
 Measurements were made on a 4 GB Raspberry Pi 5 with Cortex-A76 cores sampled at
 2.4 GHz, CPU inference, MiniCPM5-2B-Q4_K_M, runtime weight repacking, FP16 KV,
 24,576-token capacity, `-t 2 -tb 4`, and OpenMP `close`/`cores`/`PASSIVE`.
-The local experiments ran on 2026-11-13. This is a single-machine experiment,
+Earlier experiments ran on 2026-11-13; the direct prefill comparison ran on
+2026-11-14. This is a single-machine experiment,
 not a multi-device study. Small differences, cold faults and memory pressure
 matter; the number of repetitions is deliberately reported.
 
@@ -24,6 +25,40 @@ summaries; raw per-repetition data is not claimed for that file.
 The included `decode_check` runs both profile settings in the current library.
 Both now share the deployed arithmetic fixes and prefill kernels. It does not
 recreate every historical binary, and it is not a long sustained-generation test.
+
+## Direct prefill comparison
+
+The final engine was compared directly with the same upstream baseline used in
+the earlier research: commit `2a0832d7` plus the zero-activation correctness fix.
+The final source matches `3ed2a774`. Both library builds use matching compiler
+flags; this measures the engine changes rather than static-linking differences.
+
+| Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
+|---|---:|---:|---:|
+| Empty | 50.16 tokens/s | 51.28 tokens/s | 2.2% |
+| 1K | 42.23 tokens/s | 45.21 tokens/s | 7.1% |
+| 8K | 18.82 tokens/s | 23.57 tokens/s | 25.3% |
+| 15K | 12.11 tokens/s | 15.31 tokens/s | 26.5% |
+| 23K | 8.21 tokens/s | 10.96 tokens/s | 33.5% |
+
+Each row measures a 128-token prefill batch after the stated synthetic retained
+context. It is not average throughput for a whole prompt from empty. Context
+capacity is 24,576, microbatch capacity 512, and prefill uses four threads in both
+builds. Speeds use median elapsed times from three runs per build; run order
+alternates baseline/candidate, candidate/baseline, baseline/candidate.
+
+Each case gets an untimed warmup. Loading, seeding, output checks and four
+following decode steps are outside the timer. Prefill logits, canonical new KV
+bytes and following decode logits matched exactly across both builds and all
+repetitions (202,905,600 reference bytes compared).
+
+All 1K-and-longer timed samples had zero major faults. The first empty-context
+baseline sample had 24; its small apparent gain should be treated cautiously
+because baseline speeds ranged from 48.54 to 51.35 t/s. Every recorded frequency
+was 2.4 GHz, with temperatures between 49.6 and 65.0°C. Three repeats establish a
+useful local comparison, not a precise statistical confidence interval.
+
+[Raw results, build hashes and reproduction instructions](results/prefill-total/README.md).
 
 ## Incremental prefill kernel experiments
 

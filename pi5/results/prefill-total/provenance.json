@@ -1,0 +1,31 @@
+{
+  "baseline_upstream_revision": "2a0832d7cb57fd63ef5966760ccfd6db3994a1d9",
+  "baseline_patch": "baseline-correctness.patch",
+  "baseline_patch_sha256": "6bf519a17606b9f9c5aaefa68b3363b109b7f0cf87d754d789839483225eac8a",
+  "candidate_verified_engine_revision": "3ed2a7742b000c081326422ea28eeb1f93cbbae2",
+  "candidate_engine_file_sha256": {
+    "common/common.cpp": "aafbcedc1aaa60c74b3ec97b9db43212387f804d26bea20decebd96bbccee667",
+    "common/common.h": "59f53a985e659ee51520c44a1a21e25700c62e9bfb3d4fdf09556f2467ddfc4b",
+    "examples/server/server-context.cpp": "ffd0d94123ffefd74bbfb46be4dcfc68e819e34cf1aa73cc9002dc6badaf0a2d",
+    "examples/server/server-task.cpp": "d519334bcba798cb4993d24271e7ef8d5095bb0e8bad5d07b2ef99f3050d976a",
+    "examples/server/server-task.h": "c267e45ebd85e47796dfac1152f150fe146f6c95acfd6ae6fffba27b0f3187f4",
+    "ggml/include/ggml-backend.h": "7a63ac434a2f34799eec48138cef99554129775a90da911bafc9459281ba1843",
+    "ggml/include/ggml.h": "0209335f83df41fc2e903af9d39cd5d484c2b3c7cffaf2f7f55857029823db2c",
+    "ggml/src/ggml-backend.cpp": "d0eaf0d58c5413371bf9ae5ef56525038f017e4d20257cd33ac0fdacf27fe26a",
+    "ggml/src/ggml-quants.c": "f0931945d636c8ae5152b7ed5c501962a85bc49ada023357142c1ffdf5456509",
+    "ggml/src/ggml.c": "c5690765845421f5486f7cf51141b69bf4e89ddb1cff34fa56170ca1e7854f65",
+    "ggml/src/iqk/fa/iqk_fa_128_128.cpp": "4ba329f05ea2f93d0bec24a2ce84e87dc3ba7628118e7bc42069675ca4443cfb",
+    "ggml/src/iqk/fa/iqk_fa_128_value.h": "45ae368f1061cc008542e3e334d39184468d678ff82d625a3a5b75f6344091a5",
+    "ggml/src/iqk/iqk_flash_attn.cpp": "36a62b2069cea6840b5247bf8f6a303e47c0a64ffcf0d223d7f5e593c440a7f8",
+    "ggml/src/iqk/iqk_gemm_floats.cpp": "e40fa9acc2d7c66d2ae0b1bbd6a4aa10a8c3ee0386b58dde91135a8f2d27024e",
+    "ggml/src/iqk/iqk_mul_mat.h": "3b65c1bcb7e1d250998c66c649e506853b48c519a891b0869c3e74d0efad354d",
+    "ggml/src/iqk/iqk_quantize.cpp": "8d41074fdd6496af3a2b4151784f4b7393475892a276b1ee002c9a6d00cbe54f",
+    "include/llama.h": "4f409588cdf6077f3e320234255f2c951d5200aa77292edca45705b306571916",
+    "src/llama-build-context.cpp": "2b7a55edefd1c4398cf80eb05fbf92cb0a31cb2f744fae0c6b801fedc8978e3b",
+    "src/llama-cparams.h": "85663987e0c4e9bfcda025b63bce519cf6d78a120a9c4da691da13984d338580",
+    "src/llama.cpp": "45c9ce71042bdc019ca03742b5b45eb94664192b74b0a3a52414eff7b64a2d1b"
+  },
+  "both_library_cxx_flags": "-mcpu=cortex-a76 -O3 -DNDEBUG -std=gnu++20 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-array-bounds -Wno-format-truncation -Wextra-semi -march=native -flax-vector-conversions -fopenmp",
+  "library_artifact_checks": "Both library pairs matched their archived SHA256 manifests before testing.",
+  "comparison_scope": "Matched shared-library builds; measures engine optimizations, not static linking."
+}

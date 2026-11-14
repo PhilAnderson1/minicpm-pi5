@@ -16,6 +16,8 @@ jobs:
           for script in pi5/*.sh; do sh -n "$script"; done
           python3 -m py_compile pi5/tests/http_smoke.py
           python3 pi5/tests/http_smoke.py --help
+          python3 -m py_compile pi5/tests/compare_prefill.py
+          python3 pi5/tests/compare_prefill.py --help
           ./pi5/build.sh --help
           ./pi5/serve.sh --help
           ./pi5/build-tests.sh --help
