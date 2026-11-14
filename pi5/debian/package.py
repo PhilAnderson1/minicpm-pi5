@@ -2,6 +2,7 @@
 """Assemble a local arm64 .deb without root or changing the host service."""
 import argparse
 import gzip
+import hashlib
 import pathlib
 import re
 import shutil
@@ -21,6 +22,8 @@ if 'AArch64' not in header:
     raise SystemExit('Expected an AArch64 executable')
 dynamic = subprocess.check_output(['readelf', '-d', str(a.binary)], text=True)
 needed = re.findall(r'Shared library: \[(.*?)\]', dynamic)
+if '(RPATH)' in dynamic or '(RUNPATH)' in dynamic:
+    raise SystemExit('Unexpected runtime library search path in packaged executable')
 allowed = {'libc.so.6', 'libm.so.6', 'libgomp.so.1', 'libpthread.so.0', 'libdl.so.2', 'librt.so.1', 'ld-linux-aarch64.so.1'}
 if set(needed) - allowed or 'libc.so.6' not in needed:
     raise SystemExit(f'Unexpected dynamic dependencies: {needed}')
@@ -81,6 +84,19 @@ Description: MiniCPM inference optimized for Raspberry Pi 5
  Raspberry Pi 5 and separately downloaded MiniCPM5-2B-Q4_K_M weights.
  The systemd service is enabled on first install but never auto-started.
 ''')
+    # Package permissions must not depend on the builder's umask.
+    for path in [root, *root.rglob('*')]:
+        if path.is_dir():
+            path.chmod(0o755)
+        elif path.is_file() and not path.stat().st_mode & 0o111:
+            path.chmod(0o644)
+    sums = []
+    for path in sorted(root.rglob('*')):
+        if path.is_file() and path.relative_to(root).parts[0] != 'DEBIAN':
+            digest = hashlib.md5(path.read_bytes(), usedforsecurity=False).hexdigest()
+            sums.append(f'{digest}  {path.relative_to(root)}\n')
+    (root/'DEBIAN/md5sums').write_text(''.join(sums))
+    (root/'DEBIAN/md5sums').chmod(0o644)
     output = a.output.resolve()/f'minicpm-pi5_{a.version}_arm64.deb'
     subprocess.run(['dpkg-deb', '--root-owner-group', '--build', str(root), str(output)], check=True)
     print('Dynamic libraries:', ', '.join(needed))

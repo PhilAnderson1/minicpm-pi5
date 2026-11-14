@@ -134,7 +134,9 @@ This uses synthetic retained KV and measures only incremental prefill. See the
   quantized KV and other hardware are outside this profile's validation.
 
 An optional [systemd example](pi5/minicpm-pi5.service.example) requires editing
-its user and absolute paths. No helper installs or replaces a system service.
+its user and absolute paths. The source build and launch scripts do not install
+a system service; the Debian package provides the managed installation described
+above.
 
 ## Provenance and license
 

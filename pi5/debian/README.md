@@ -69,11 +69,36 @@ systemd installation or model inference.
 
 ### Current validation status (2026-11-14)
 
-CMake configuration, shell/Python checks, mocked lifecycle tests, and a complete
-package assembly/extraction test using a temporary AArch64 probe executable passed.
-The archive test checked dependency generation and conffile registration.
-The full server build was stopped when available RAM fell to about 100 MiB with
-all 2 GiB of swap occupied. Resume `./pi5/build-deb.sh` after freeing memory;
-completed compilation units are retained. No release server package has yet been
-validated. `systemd-analyze verify` was blocked by this session's sandbox, and
-real installation/upgrade/removal and inference tests remain outstanding.
+The full mostly static build and `.deb` assembly completed on Debian 13 arm64
+with GCC 14.2. The package is approximately 11 MiB (about 36 MiB installed).
+Its ELF dependencies are only `libgomp.so.1`, `libm.so.6` and `libc.so.6`, with no
+RPATH/RUNPATH. Generated package dependencies include `libc6 (>= 2.38)` and
+`libgomp1 (>= 4.9)`; this binary therefore does **not** support Debian 12/Bookworm.
+
+Validation passed:
+
+- Shell/Python checks and mocked first-install/upgrade/removal/purge tests.
+- Extraction, payload checksums, permissions and configuration registration.
+- Extracted server help/version, with no build-directory libraries required.
+- Helpers linked against the new static engine archives.
+- Direct short integration tests using the tested GGUF: exact logits and cache
+  bytes across layouts, state restore, shifting, defragmentation, and cancellation
+  recovery. No differences were found in the checked logits.
+
+The first build attempt was stopped for memory pressure; after the existing model
+server was stopped, the resumed build completed with two jobs. No service was
+installed or started. HTTP tests and `systemd-analyze verify` are blocked by this
+session's socket restrictions. Real installation/upgrade/removal and HTTP checks
+remain required before publishing this as a validated binary release.
+
+The local artifact and SHA256 sidecar are in `build-pi5-deb/packages/`. To run the
+HTTP smoke test from a normal terminal, with other model servers stopped:
+
+```sh
+MINICPM_PI5_BUILD_DIR="$PWD/build-pi5-deb" \
+  python3 pi5/tests/http_smoke.py --model /path/to/MiniCPM5-2B-Q4_K_M.gguf
+```
+
+This starts and stops a temporary server on port 8081; it does not install the
+package or modify systemd. After that, use the disposable-image installation
+checklist above to validate the actual service lifecycle.

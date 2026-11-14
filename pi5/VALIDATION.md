@@ -5,7 +5,9 @@ alongside cache-heavy tests. These tools never stop or start system services.
 The server should be built from this repository with `pi5/build.sh`.
 
 Build helpers with `pi5/build-tests.sh`. Outputs default to `build-pi5-tests/`;
-MINICPM_PI5_TEST_DIR overrides that directory. For meaningful timings export:
+MINICPM_PI5_TEST_DIR overrides that directory. Both shared-library and static
+engine builds are supported; set MINICPM_PI5_BUILD_DIR to `build-pi5-deb` to test
+the package build. For meaningful timings export:
 
 ```sh
 export OMP_PROC_BIND=close OMP_PLACES=cores OMP_WAIT_POLICY=PASSIVE
