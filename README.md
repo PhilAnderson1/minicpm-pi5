@@ -33,9 +33,21 @@ On one **4 GB Raspberry Pi 5**, short synthetic decode comparisons measured:
 | 8K | 5.06 tokens/s | 6.05 tokens/s | 19.4% |
 | 15K | 3.77 tokens/s | 5.00 tokens/s | 32.4% |
 
-Separate controlled prefill experiments measured **15.5–23.1%** from the Q×K
-change at long context, then roughly **1.9–3.4%** from the wider-value tile.
-These are incremental experiments, not one combined before/after benchmark.
+Controlled prefill comparisons measured the following incremental improvements
+(medians of three alternating repetitions, with synthetic retained KV):
+
+| Optimization | Retained context | New prompt tokens | Before (tokens/s) | After (tokens/s) | Gain |
+|---|---:|---:|---:|---:|---:|
+| Q×K accumulators | 8,192 | 128 | 20.08 | 23.19 | 15.45% |
+| Q×K accumulators | 23,552 | 128 | 9.17 | 11.28 | 23.07% |
+| Q×K accumulators | 23,552 | 512 | 9.11 | 11.16 | 22.46% |
+| Wider value tile, after Q×K | 8,192 | 128 | 23.29 | 23.74 | 1.93% |
+| Wider value tile, after Q×K | 23,552 | 128 | 11.31 | 11.70 | 3.43% |
+| Wider value tile, after Q×K | 23,552 | 512 | 11.11 | 11.32 | 1.93% |
+
+These measure processing new prompt tokens after an existing context, rather than
+prefilling the entire context from empty. Each optimization was tested separately;
+the rows are not one combined before/after benchmark and gains should not be added.
 Generation still slows as context grows. Results are not promises for other
 models or machines. [Methods, raw data and rejected experiments](pi5/PERFORMANCE.md).
 
