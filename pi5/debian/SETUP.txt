@@ -1,14 +1,19 @@
-MiniCPM Pi 5 installed. Installation does not start or restart the service.
+MiniCPM Pi 5 installed. Installation does not start the service.
 
-Download the model (skip if already present):
+Download the model (skip if already at the path below):
 
   sudo curl -fL https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/main/MiniCPM5-2B-Q4_K_M.gguf \
     -o /opt/minicpm-pi5/models/MiniCPM5-2B-Q4_K_M.gguf
 
-Stop any other model server, then start:
+Start the minicpm-pi5 server:
 
   sudo systemctl start minicpm-pi5
 
-Open http://localhost:8080 on the Pi.
-Settings: /etc/default/minicpm-pi5
-After an upgrade: sudo systemctl restart minicpm-pi5
+Your LLM server should now be working, test by opening http://localhost:8080 on the Pi.
+
+Server settings are in: /etc/default/minicpm-pi5
+
+
+After changing the settings or upgrading, execute:
+
+  sudo systemctl restart minicpm-pi5
