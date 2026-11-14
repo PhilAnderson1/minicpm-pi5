@@ -35,7 +35,7 @@ engine. [Methods and raw results](pi5/PERFORMANCE.md).
 ## Install
 
 
-[Download the latest release .deb](https://github.com/PhilAnderson1/minicpm-pi5/releases/latest).
+Download the latest install package from [releases](https://github.com/PhilAnderson1/minicpm-pi5/releases/latest).
 
 ```sh
 # 1. Create the model directory
