@@ -1,0 +1,18 @@
+# Copy to /etc/systemd/system/minicpm-pi5.service after editing all paths/user.
+# Do not run concurrently with another model service on a 4 GB Pi.
+[Unit]
+Description=MiniCPM Pi 5 inference server
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_LINUX_USER
+WorkingDirectory=/absolute/path/to/minicpm-pi5
+Environment=PORT=8080
+Environment=HOST=127.0.0.1
+ExecStart=/absolute/path/to/minicpm-pi5/pi5/serve.sh /absolute/path/to/MiniCPM5-2B-Q4_K_M.gguf
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

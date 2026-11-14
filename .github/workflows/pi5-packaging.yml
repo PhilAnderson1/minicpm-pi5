@@ -1,0 +1,22 @@
+name: Pi 5 packaging checks
+on:
+  push:
+    paths: ['pi5/**', '.github/workflows/pi5-packaging.yml']
+  pull_request:
+    paths: ['pi5/**', '.github/workflows/pi5-packaging.yml']
+permissions:
+  contents: read
+jobs:
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate portable entry points (no model or ARM build)
+        run: |
+          for script in pi5/*.sh; do sh -n "$script"; done
+          python3 -m py_compile pi5/tests/http_smoke.py
+          python3 pi5/tests/http_smoke.py --help
+          ./pi5/build.sh --help
+          ./pi5/serve.sh --help
+          ./pi5/build-tests.sh --help
+          git diff --check

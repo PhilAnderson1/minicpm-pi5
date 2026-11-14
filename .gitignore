@@ -162,3 +162,11 @@ a.out
 a.out.*
 .dev
 .github
+
+# MiniCPM Pi 5 local validation and model/cache artifacts
+/pi5/tests/__pycache__/
+/pi5/results-local/
+*.f32
+*.gguf.part
+.env
+.env.*

@@ -1,0 +1,87 @@
+{
+  "status": "passed_smoke",
+  "server_exit": 0,
+  "stream_close_recovery": "passed",
+  "requests": [
+    {
+      "label": "prompt A",
+      "seconds": 7.656464291998418,
+      "timings": {
+        "prompt_n": 361,
+        "prompt_ms": 6824.492,
+        "prompt_per_token_ms": 18.90440997229917,
+        "prompt_per_second": 52.89771018853857,
+        "predicted_n": 8,
+        "predicted_ms": 828.554,
+        "predicted_per_token_ms": 103.56925,
+        "predicted_per_second": 9.65537550962279,
+        "n_ctx": 24576,
+        "n_past": 368
+      }
+    },
+    {
+      "label": "live replay prompt A",
+      "seconds": 0.9207872920087539,
+      "timings": {
+        "prompt_n": 1,
+        "prompt_ms": 115.311,
+        "prompt_per_token_ms": 115.311,
+        "prompt_per_second": 8.672199529966784,
+        "predicted_n": 8,
+        "predicted_ms": 803.138,
+        "predicted_per_token_ms": 100.39225,
+        "predicted_per_second": 9.960928258904447,
+        "n_ctx": 24576,
+        "n_past": 368
+      }
+    },
+    {
+      "label": "prompt B",
+      "seconds": 7.598916468996322,
+      "timings": {
+        "prompt_n": 360,
+        "prompt_ms": 6779.379,
+        "prompt_per_token_ms": 18.83160833333333,
+        "prompt_per_second": 53.102208919135514,
+        "predicted_n": 8,
+        "predicted_ms": 804.89,
+        "predicted_per_token_ms": 100.61125,
+        "predicted_per_second": 9.939246356645008,
+        "n_ctx": 24576,
+        "n_past": 368
+      }
+    },
+    {
+      "label": "restore prompt A",
+      "seconds": 0.9412722630077042,
+      "timings": {
+        "prompt_n": 1,
+        "prompt_ms": 115.613,
+        "prompt_per_token_ms": 115.613,
+        "prompt_per_second": 8.649546331294923,
+        "predicted_n": 8,
+        "predicted_ms": 802.624,
+        "predicted_per_token_ms": 100.328,
+        "predicted_per_second": 9.967307232278127,
+        "n_ctx": 24576,
+        "n_past": 368
+      }
+    },
+    {
+      "label": "after stream cancellation",
+      "seconds": 1.0338718979910482,
+      "timings": {
+        "prompt_n": 1,
+        "prompt_ms": 115.167,
+        "prompt_per_token_ms": 115.167,
+        "prompt_per_second": 8.683042885548812,
+        "predicted_n": 8,
+        "predicted_ms": 801.623,
+        "predicted_per_token_ms": 100.202875,
+        "predicted_per_second": 9.97975357493485,
+        "n_ctx": 24576,
+        "n_past": 368
+      }
+    }
+  ]
+}
