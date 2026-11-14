@@ -1,7 +1,7 @@
 # minicpm-pi5
 
-MiniCPM5-2B can be surprisingly useful for coding and agentic tasks—even on a
-Raspberry Pi 5 with just **4 GB of RAM and up to 24K tokens of context**.
+MiniCPM5-2B can be surprisingly useful for coding and agentic tasks offering up to
+24K tokens of available context on a Raspberry Pi 5 with just 4 GB of RAM.
 `minicpm-pi5` is a fork of [ik_llama.cpp](https://github.com/ikawrakow/ik_llama.cpp)
 tuned for this setup, improving throughput especially at longer context lengths.
 
@@ -38,9 +38,6 @@ engine. [Methods and raw results](pi5/PERFORMANCE.md).
 Raspberry Pi 5, 64-bit Debian 13 / Raspberry Pi OS Trixie. Stop any other model
 server first.
 
-The `.deb` is built locally; the download below will work once release `v0.1.0`
-is published.
-
 ```sh
 # 1. Create the model directory
 sudo install -d -m 0755 /opt/minicpm-pi5/models
@@ -59,9 +56,8 @@ sudo apt install ./minicpm-pi5_0.1.0_arm64.deb
 sudo systemctl start minicpm-pi5
 ```
 
-Open **http://localhost:8080** on the Pi. Settings: `/etc/default/minicpm-pi5`.
-The service starts automatically on subsequent boots. The tested 24K context and
-1 GiB prompt-cache setup used swap on the 4 GB Pi.
+Open **http://localhost:8080** on the Pi or connect your client to port 8080. Settings: `/etc/default/minicpm-pi5`.
+The service starts automatically on subsequent boots.
 
 [Settings and troubleshooting](pi5/debian/README.md) ·
 [Build from source](pi5/BUILD.md)
