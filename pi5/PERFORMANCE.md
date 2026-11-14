@@ -15,12 +15,29 @@ matter; the number of repetitions is deliberately reported.
 | 1,024 | 7.9542 | 8.1456 | 2.41% |
 | 8,192 | 5.0647 | 6.0483 | 19.42% |
 | 15,360 | 3.7725 | 4.9959 | 32.43% |
+| 23,552 | 2.9345 | 3.7412 | 27.49% |
 
-These user-run checks used synthetic retained KV, three alternating repetitions,
+The 1K–15K user-run checks used synthetic retained KV, three alternating repetitions,
 16 generated tokens each, and exact-logit comparisons. The baseline is the
 unoptimized research path with the zero-activation metadata fix, not the older
 installed `/opt` build. `results/reported-decode.csv` transcribes the terminal
 summaries; raw per-repetition data is not claimed for that file.
+
+The 23K row was measured on 2026-11-14 against the preserved baseline and final
+engine libraries used for the direct prefill comparison. Separate processes keep
+only one model/context resident at a time. It retains the earlier decode settings:
+512 tokens of capacity beyond the retained prefix, 64-token batch/microbatch
+capacity, FP16 KV, repacking, two decode threads and four batch threads.
+
+Each process seeds identical synthetic KV, warms one decode step, removes that
+step, then times 16 decode steps. Logit capture/comparison is outside the timer.
+Three pairs run in alternating order; throughput is 48 tokens divided by summed
+decode time, matching the earlier decode aggregation. All 16 logit vectors match
+exactly across builds and repetitions (41,779,200 bytes compared). All samples
+had zero major faults and recorded 2.4 GHz. Candidate samples ranged from 3.63 to
+3.80 t/s, so the aggregate should not be treated as an exact performance guarantee.
+
+[23K raw timings, build hashes and method](results/decode-23k/README.md).
 
 The included `decode_check` runs both profile settings in the current library.
 Both now share the deployed arithmetic fixes and prefill kernels. It does not

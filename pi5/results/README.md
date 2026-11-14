@@ -15,3 +15,5 @@ to historical private builds; there are no such global switches in this engine.
 
 - `prefill-total/`: direct baseline versus final-engine prefill comparison,
   including raw samples, provenance and reproduction instructions.
+- `decode-23k/`: matched 23,552-token decode comparison with raw repetitions
+  and exact-logit checks.

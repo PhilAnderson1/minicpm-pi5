@@ -1,0 +1,44 @@
+{
+  "architecture": "aarch64",
+  "model": "MiniCPM5-2B-Q4_K_M.gguf",
+  "model_sha256": "ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd",
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "governor": "ondemand",
+  "repacking": true,
+  "kv_type": "F16",
+  "prefix_type": "deterministic synthetic KV",
+  "openmp": {
+    "OMP_PROC_BIND": "close",
+    "OMP_PLACES": "cores",
+    "OMP_WAIT_POLICY": "PASSIVE"
+  },
+  "date_utc": "2026-11-14T08:43:44Z",
+  "context_capacity": 24064,
+  "threads": 2,
+  "batch_threads": 4,
+  "microbatch": 64,
+  "prefix_tokens": 23552,
+  "tokens_per_sample": 16,
+  "repetitions": 3,
+  "aggregation": "total tokens / summed timed decode durations",
+  "builds": {
+    "ik_llama": {
+      "library_sha256": {
+        "libllama.so": "62f0db9cdd371d93b8a1098b882d3a78c7a026136a8d5cd00720c5a79485d2f3",
+        "libggml.so": "c23ed33ea0bfc0e730fff8ea92dd6a805d9a438f9e35c95e2616b1c05dba8751"
+      },
+      "executable_sha256": "c046a81e71ea45c92c7f22e27f7abef118f704a6ea3471ca2ef8b0f74c94089e"
+    },
+    "minicpm_pi5": {
+      "library_sha256": {
+        "libllama.so": "6171e27f4101899dc90df74d777ef258867157e26c3e75adbd8474015a129dfe",
+        "libggml.so": "14bd9a99c323c3f93290e204b90e766c93b74e98428399706c79faa69573aadf"
+      },
+      "executable_sha256": "e80c4be9e64d66eae855fe8662800d37495b5ed01e6b8d9dbc36c2d31eedd9d2"
+    }
+  },
+  "harness_sha256": {
+    "decode_compare.cpp": "5c04ee1b7337c71e62feab84eaf5953ff6168edcd386fc5a04aac01e0386025f",
+    "prefill_compare.cpp": "ba50022f97c794068dde88500596debd3b95cef1749ce2fed6ccd14b33749fb9"
+  }
+}

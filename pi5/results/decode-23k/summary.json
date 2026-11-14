@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "prefix_tokens": 23552,
+  "tokens_per_sample": 16,
+  "repetitions": 3,
+  "ik_llama": 2.934534869620156,
+  "minicpm_pi5": 3.7412312317985412,
+  "gain_percent": 27.489752141974154,
+  "checked_logit_bytes": 41779200,
+  "timed_major_faults": 0
+}

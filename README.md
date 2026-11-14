@@ -32,6 +32,7 @@ On one **4 GB Raspberry Pi 5**, short synthetic decode comparisons measured:
 | 1K | 7.95 tokens/s | 8.15 tokens/s | 2.4% |
 | 8K | 5.06 tokens/s | 6.05 tokens/s | 19.4% |
 | 15K | 3.77 tokens/s | 5.00 tokens/s | 32.4% |
+| 23K | 2.93 tokens/s | 3.74 tokens/s | 27.5% |
 
 Matched prefill comparisons, processing **128 new tokens** after each retained
 context:
