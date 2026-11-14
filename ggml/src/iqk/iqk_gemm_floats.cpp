@@ -866,6 +866,114 @@ IQK_NOINLINE void mul_mat_Qx_Qy_NxN(int n, const char * cx, size_t bx, int ix0, 
     for (int iy = 0; iy < Qy::nrc_y; ++iy) for (int ix = 0; ix < Qx::nrc_y; ++ix) info.store(ix0+ix, iy, Qx::Base::hsum(acc[Qx::nrc_y*iy+ix]));
 }
 
+// Fixed D128 prefill kernel, measured on Cortex-A76. Named accumulators avoid
+// redundant per-iteration stack stores emitted for the generic accumulator array.
+// Preserve FP16 multiply/FMA/reduction order; other dimensions and decode retain
+// the generic kernel. Keep this helper inside the AArch64 implementation.
+IQK_NOINLINE void pi_qk_named_4x6(const char * cx, size_t bx, int ix0, const DataInfo& info) {
+    QF16<4> y(info); QF16<6> x(cx + ix0*bx, bx);
+    QF16Base::Acc a00, a01, a02, a03, a04, a05;
+    QF16Base::Acc a10, a11, a12, a13, a14, a15;
+    QF16Base::Acc a20, a21, a22, a23, a24, a25;
+    QF16Base::Acc a30, a31, a32, a33, a34, a35;
+    {
+        const auto x0 = x.load1(0, 0);
+        const auto x1 = x.load1(1, 0);
+        const auto x2 = x.load1(2, 0);
+        const auto x3 = x.load1(3, 0);
+        const auto x4 = x.load1(4, 0);
+        const auto x5 = x.load1(5, 0);
+        auto yv = y.load1(0, 0);
+        a00 = QF16Base::acc_first(yv, x0);
+        a01 = QF16Base::acc_first(yv, x1);
+        a02 = QF16Base::acc_first(yv, x2);
+        a03 = QF16Base::acc_first(yv, x3);
+        a04 = QF16Base::acc_first(yv, x4);
+        a05 = QF16Base::acc_first(yv, x5);
+        yv = y.load1(1, 0);
+        a10 = QF16Base::acc_first(yv, x0);
+        a11 = QF16Base::acc_first(yv, x1);
+        a12 = QF16Base::acc_first(yv, x2);
+        a13 = QF16Base::acc_first(yv, x3);
+        a14 = QF16Base::acc_first(yv, x4);
+        a15 = QF16Base::acc_first(yv, x5);
+        yv = y.load1(2, 0);
+        a20 = QF16Base::acc_first(yv, x0);
+        a21 = QF16Base::acc_first(yv, x1);
+        a22 = QF16Base::acc_first(yv, x2);
+        a23 = QF16Base::acc_first(yv, x3);
+        a24 = QF16Base::acc_first(yv, x4);
+        a25 = QF16Base::acc_first(yv, x5);
+        yv = y.load1(3, 0);
+        a30 = QF16Base::acc_first(yv, x0);
+        a31 = QF16Base::acc_first(yv, x1);
+        a32 = QF16Base::acc_first(yv, x2);
+        a33 = QF16Base::acc_first(yv, x3);
+        a34 = QF16Base::acc_first(yv, x4);
+        a35 = QF16Base::acc_first(yv, x5);
+    }
+    for (int i = 1; i < 128/QF16Base::k_step; ++i) {
+        const auto x0 = x.load1(0, i);
+        const auto x1 = x.load1(1, i);
+        const auto x2 = x.load1(2, i);
+        const auto x3 = x.load1(3, i);
+        const auto x4 = x.load1(4, i);
+        const auto x5 = x.load1(5, i);
+        auto yv = y.load1(0, i);
+        a00 = QF16Base::acc(a00, yv, x0);
+        a01 = QF16Base::acc(a01, yv, x1);
+        a02 = QF16Base::acc(a02, yv, x2);
+        a03 = QF16Base::acc(a03, yv, x3);
+        a04 = QF16Base::acc(a04, yv, x4);
+        a05 = QF16Base::acc(a05, yv, x5);
+        yv = y.load1(1, i);
+        a10 = QF16Base::acc(a10, yv, x0);
+        a11 = QF16Base::acc(a11, yv, x1);
+        a12 = QF16Base::acc(a12, yv, x2);
+        a13 = QF16Base::acc(a13, yv, x3);
+        a14 = QF16Base::acc(a14, yv, x4);
+        a15 = QF16Base::acc(a15, yv, x5);
+        yv = y.load1(2, i);
+        a20 = QF16Base::acc(a20, yv, x0);
+        a21 = QF16Base::acc(a21, yv, x1);
+        a22 = QF16Base::acc(a22, yv, x2);
+        a23 = QF16Base::acc(a23, yv, x3);
+        a24 = QF16Base::acc(a24, yv, x4);
+        a25 = QF16Base::acc(a25, yv, x5);
+        yv = y.load1(3, i);
+        a30 = QF16Base::acc(a30, yv, x0);
+        a31 = QF16Base::acc(a31, yv, x1);
+        a32 = QF16Base::acc(a32, yv, x2);
+        a33 = QF16Base::acc(a33, yv, x3);
+        a34 = QF16Base::acc(a34, yv, x4);
+        a35 = QF16Base::acc(a35, yv, x5);
+    }
+    info.store(ix0+0, 0, QF16Base::hsum(a00));
+    info.store(ix0+1, 0, QF16Base::hsum(a01));
+    info.store(ix0+2, 0, QF16Base::hsum(a02));
+    info.store(ix0+3, 0, QF16Base::hsum(a03));
+    info.store(ix0+4, 0, QF16Base::hsum(a04));
+    info.store(ix0+5, 0, QF16Base::hsum(a05));
+    info.store(ix0+0, 1, QF16Base::hsum(a10));
+    info.store(ix0+1, 1, QF16Base::hsum(a11));
+    info.store(ix0+2, 1, QF16Base::hsum(a12));
+    info.store(ix0+3, 1, QF16Base::hsum(a13));
+    info.store(ix0+4, 1, QF16Base::hsum(a14));
+    info.store(ix0+5, 1, QF16Base::hsum(a15));
+    info.store(ix0+0, 2, QF16Base::hsum(a20));
+    info.store(ix0+1, 2, QF16Base::hsum(a21));
+    info.store(ix0+2, 2, QF16Base::hsum(a22));
+    info.store(ix0+3, 2, QF16Base::hsum(a23));
+    info.store(ix0+4, 2, QF16Base::hsum(a24));
+    info.store(ix0+5, 2, QF16Base::hsum(a25));
+    info.store(ix0+0, 3, QF16Base::hsum(a30));
+    info.store(ix0+1, 3, QF16Base::hsum(a31));
+    info.store(ix0+2, 3, QF16Base::hsum(a32));
+    info.store(ix0+3, 3, QF16Base::hsum(a33));
+    info.store(ix0+4, 3, QF16Base::hsum(a34));
+    info.store(ix0+5, 3, QF16Base::hsum(a35));
+}
+
 template <int nrc_y, int nrc_x, bool is_multiple_of_k_step>
 IQK_NOINLINE void mul_mat_f16_f16_NxN(int n, const char * cx, size_t bx, int ix0, const DataInfo& info) {
     assert(n%QF16Base::k_step == 0);
@@ -1111,7 +1219,10 @@ inline void mm_helper(int D, int nq, const char * cx, size_t bx, DataInfo& info,
     int krem = k_step - nrc_k*(k_step/nrc_k);
     for (int iq = 0; iq < nq/nrc_q; ++iq) {
         for (int ik = 0; ik < k_step/nrc_k; ++ik) {
-            mul_mat_f16_f16_NxN<nrc_q, nrc_k, true>(D, cx, bx, ik*nrc_k, info);
+            if constexpr (nrc_q == 4) {
+                if (D == 128 && nq >= 64) pi_qk_named_4x6(cx, bx, ik*nrc_k, info);
+                else mul_mat_f16_f16_NxN<nrc_q, nrc_k, true>(D, cx, bx, ik*nrc_k, info);
+            } else mul_mat_f16_f16_NxN<nrc_q, nrc_k, true>(D, cx, bx, ik*nrc_k, info);
         }
         if (krem > 0) {
             switch (krem) {
