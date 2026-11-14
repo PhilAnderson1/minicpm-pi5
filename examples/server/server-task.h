@@ -455,12 +455,14 @@ struct server_prompt {
 };
 
 struct server_prompt_cache {
-    server_prompt_cache(llama_context* ctx, int32_t limit_size_mib, size_t limit_tokens) {
+    server_prompt_cache(llama_context* ctx, int32_t limit_size_mib, size_t limit_tokens, bool evict_before_alloc = false) {
+        this->evict_before_alloc = evict_before_alloc;
         this->ctx = ctx;
         this->limit_size = 1024ull * 1024ull * (limit_size_mib < 0 ? 0 : limit_size_mib);
         this->limit_tokens = limit_tokens;
     }
 
+    bool evict_before_alloc = false;
     std::list<server_prompt> states;
 
     // in bytes, 0 = no limit

@@ -1167,6 +1167,21 @@ server_prompt* server_prompt_cache::alloc(const server_prompt& prompt, size_t st
         }
     }
 
+    // On the 4 GiB Pi, evict before allocating a replacement: allocating first
+    // can temporarily double the configured 1 GiB saved-prompt budget.
+    if (evict_before_alloc && limit_size > 0) {
+        size_t incoming = state_size;
+        for (const auto & checkpoint : prompt.checkpoints) incoming += checkpoint.size();
+        if (incoming > limit_size) {
+            LLAMA_LOG_INFO(" - prompt exceeds cache budget; retaining live context only\n");
+            return nullptr;
+        }
+        while (!states.empty() && size() > limit_size - incoming) {
+            LLAMA_LOG_INFO(" - evicting oldest prompt before allocating replacement\n");
+            states.pop_front();
+        }
+    }
+
     std::vector<uint8_t> state_data;
 
     // check if we can allocate enough memory for the new state

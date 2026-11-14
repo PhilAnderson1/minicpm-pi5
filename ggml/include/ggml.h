@@ -883,6 +883,7 @@ extern "C" {
 
         // read-ahead selected MoE expert weights in the CPU matmul-id kernels
         bool moe_expert_prefetch;
+        bool pi5_minicpm; // context-owned mixed decode scheduling
 
         // optional CPU affinity: pin worker ith to cpu_affinity[ith % n_cpu_affinity]
         const int32_t * cpu_affinity;

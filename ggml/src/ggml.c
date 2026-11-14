@@ -3165,6 +3165,9 @@ struct ggml_compute_state_shared {
     ggml_abort_callback abort_callback; // abort ggml_graph_compute when true
     void * abort_callback_data;
 
+    struct ggml_compute_state_shared * pi_subset;
+    int * node_ends;
+    enum ggml_status * node_status;
     atomic_int current_chunk; // currently processing chunk during mul_mat, shared between all the threads
 
     enum ggml_status ec;
@@ -5054,7 +5057,7 @@ static void ggml_barrier(struct ggml_compute_state_shared * shared) {
     if (shared->n_threads == 1) {
         return;
     }
-    if (shared && shared->n_batch > 32) {
+    if (shared && (shared->n_batch > 32 || shared->n_threads != omp_get_num_threads())) {
         ggml_barrier_impl(shared);
         return;
     }
@@ -23935,7 +23938,7 @@ static void ggml_compute_forward_flash_attn_ext_f16(
                 q->data, k->data, v->data, mask ? mask->data : NULL, sinks ? sinks->data : NULL,
                 scale, softcap, (float *)dst->data,
                 params->wdata, (barrier_t)ggml_barrier, (void *)params->shared, ith, nth, dst->op_params[4],
-                dst->src[5])) return;
+                dst->src[5], params->shared->pi_subset != NULL)) return;
 
 //    if (max_bias <= 0.0f && q->type == GGML_TYPE_F32 && mask && mask->type == GGML_TYPE_F16) {
 //        //if (ith == 0) printf("k: %ld x %ld x %ld, q: %ld x %ld x %ld, v: %ld x %ld x %ld mask: %ld x %ld x %ld\n",
@@ -30085,6 +30088,7 @@ struct ggml_cplan ggml_graph_plan(const struct ggml_cgraph * cgraph, int n_threa
 #if GGML_USE_IQK_MULMAT
                     size_t size = iqk_fa_work_buffer_size(node, n_tasks);
                     cur = MAX(cur, size);
+                    cur = MAX(cur, 4 * (128 + 16) * 4 * sizeof(float));
 #endif
                 } break;
             case GGML_OP_LATENT_ATTN:
@@ -30188,7 +30192,15 @@ static thread_ret_t ggml_graph_compute_thread(void * data) {
 #if IK_PRINT_TIMING
         int64_t tim1 = ggml_time_us();
 #endif
-        node_n = ggml_compute_forward(&params, node, cgraph, node_n);
+        const int first = node_n;
+        const bool projection = state->shared->pi_subset &&
+            (node->op == GGML_OP_MUL_MAT || node->op == GGML_OP_FUSED_UP_GATE);
+        params.nth = projection ? 2 : state->shared->n_threads;
+        params.shared = projection ? state->shared->pi_subset : state->shared;
+        if (!projection || state->ith < 2) {
+            node_n = ggml_compute_forward(&params, node, cgraph, node_n);
+        }
+        if (state->ith == 0) state->shared->node_ends[first] = node_n;
 #if IK_PRINT_TIMING
         int64_t tim2 = ggml_time_us();
         t_eval += tim2 - tim1;
@@ -30198,9 +30210,11 @@ static thread_ret_t ggml_graph_compute_thread(void * data) {
             state->shared->ec = GGML_STATUS_ABORTED;
         }
 
+        if (state->ith == 0) state->shared->node_status[first] = state->shared->ec;
         ggml_barrier(state->shared);
+        node_n = state->shared->node_ends[first];
 
-        if (state->shared->ec != GGML_STATUS_SUCCESS) {
+        if (state->shared->node_status[first] != GGML_STATUS_SUCCESS) {
             break;
         }
     }
@@ -30236,10 +30250,21 @@ enum ggml_status ggml_graph_compute(struct ggml_cgraph * cgraph, struct ggml_cpl
         /*.n_barrier_passed        =*/ 0,
         /*.abort_callback          =*/ NULL,
         /*.abort_callback_data     =*/ NULL,
+        /*.pi_subset               =*/ NULL,
+        /*.node_ends               =*/ alloca(sizeof(int) * MAX(1, cgraph->n_nodes)),
+        /*.node_status             =*/ alloca(sizeof(enum ggml_status) * MAX(1, cgraph->n_nodes)),
         /*.current_chunk           =*/ 0,
         /*.ec                      =*/ GGML_STATUS_SUCCESS,
     };
 
+    struct ggml_compute_state_shared pi_subset = {
+        .cgraph = cgraph, .cplan = cplan, .n_threads = 2,
+        .n_batch = cgraph->n_batch, .n_barrier = 0, .n_barrier_passed = 0,
+        .current_chunk = 0, .ec = GGML_STATUS_SUCCESS,
+    };
+    if (cplan->pi5_minicpm && cgraph->n_batch == 1 && n_threads == 4) {
+        state_shared.pi_subset = &pi_subset;
+    }
 #ifdef GGML_USE_OPENMP
     if (n_threads > 1) {
 //#if IK_PRINT_TIMING
@@ -30252,6 +30277,7 @@ enum ggml_status ggml_graph_compute(struct ggml_cgraph * cgraph, struct ggml_cpl
                 // update the number of threads from the actual number of threads that we got from OpenMP
                 n_threads = omp_get_num_threads();
                 state_shared.n_threads = n_threads;
+                if (n_threads != 4) state_shared.pi_subset = NULL;
             }
 
             struct ggml_compute_state worker = {

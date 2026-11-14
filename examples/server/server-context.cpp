@@ -466,7 +466,7 @@ void server_context::init() {
         }
         LLAMA_LOG_INFO("%s", "use `--cache-ram 0` to disable the prompt cache\n");
         // only apply ram size limit. No token limit for now.
-        prompt_cache = std::make_unique<server_prompt_cache>(ctx, params_base.cache_ram_mib, 0);
+        prompt_cache = std::make_unique<server_prompt_cache>(ctx, params_base.cache_ram_mib, 0, params_base.pi5_minicpm);
     }
     else {
         if (params_base.cache_ram_mib != 0) {

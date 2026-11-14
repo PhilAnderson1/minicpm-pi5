@@ -7397,7 +7397,7 @@ static size_t llama_output_reserve(llama_context & lctx, size_t n_outputs) {
     return llama_output_reserve(lctx, n_outputs, n_outputs, n_outputs);
 }
 
-static void llama_graph_compute(
+static enum ggml_status llama_graph_compute(
         llama_context & lctx,
           ggml_cgraph * gf,
                   int   n_threads) {
@@ -7408,13 +7408,17 @@ static void llama_graph_compute(
 #endif
 
     if (lctx.backend_cpu != nullptr) {
+        ggml_backend_cpu_set_pi5_minicpm(lctx.backend_cpu, lctx.cparams.pi5_minicpm && n_threads == 4 && gf->n_batch == 1);
         ggml_backend_cpu_set_n_threads(lctx.backend_cpu, n_threads);
-        ggml_backend_cpu_set_abort_callback(lctx.backend_cpu, lctx.abort_callback, lctx.abort_callback_data);
+        // KV maintenance must finish atomically with respect to cancellation:
+        // a partially rotated or relocated retained cache cannot be rolled back.
+        const bool maintenance = lctx.cparams.pi5_minicpm && gf->n_batch == 0;
+        ggml_backend_cpu_set_abort_callback(lctx.backend_cpu, maintenance ? nullptr : lctx.abort_callback, lctx.abort_callback_data);
         ggml_backend_cpu_set_moe_expert_prefetch(lctx.backend_cpu, lctx.cparams.prefetch_experts);
     }
 
     if (lctx.moe_cache) lctx.moe_cache->begin_compute();
-    ggml_backend_sched_graph_compute_async(lctx.sched, gf);
+    return ggml_backend_sched_graph_compute_async(lctx.sched, gf);
 
     // fprintf(stderr, "splits: %d\n", ggml_backend_sched_get_n_splits(lctx.sched));
 }
@@ -7431,6 +7435,7 @@ static void llama_graph_compute_sched(
 #endif
 
     if (lctx.backend_cpu != nullptr) {
+        ggml_backend_cpu_set_pi5_minicpm(lctx.backend_cpu, lctx.cparams.pi5_minicpm && n_threads == 4 && gf->n_batch == 1);
         ggml_backend_cpu_set_n_threads(lctx.backend_cpu, n_threads);
         ggml_backend_cpu_set_abort_callback(lctx.backend_cpu, lctx.abort_callback, lctx.abort_callback_data);
         ggml_backend_cpu_set_moe_expert_prefetch(lctx.backend_cpu, lctx.cparams.prefetch_experts);
@@ -7705,6 +7710,9 @@ static int llama_decode_internal(
         }
 
         int n_threads = n_tokens == 1 ? cparams.n_threads : cparams.n_threads_batch;
+        if (cparams.pi5_minicpm) {
+            n_threads = n_tokens == 1 && kv_self.used < 4096 ? 2 : 4;
+        }
         GGML_ASSERT(n_threads > 0);
 
         // helpers for smoother batch API transition
@@ -7921,7 +7929,18 @@ static int llama_decode_internal(
         tim1 = ggml_time_us();
 #endif
         //fprintf(stderr, "%s: invoking llama_graph_compute\n", __func__);
-        llama_graph_compute(lctx, gf, n_threads);
+        const auto compute_status = llama_graph_compute(lctx, gf, n_threads);
+        if (cparams.pi5_minicpm && compute_status != GGML_STATUS_SUCCESS) {
+            // Discard incomplete cells, preserving all previously completed microbatches.
+            for (uint32_t i = 0; i < n_tokens; ++i) {
+                for (int32_t s = 0; s < u_batch.n_seq_id[i]; ++s) {
+                    llama_kv_cache_seq_rm(&lctx, u_batch.seq_id[i][s], u_batch.pos[i], u_batch.pos[i] + 1);
+                }
+            }
+            lctx.n_outputs = 0;
+            prev.reset();
+            return compute_status == GGML_STATUS_ABORTED ? -3 : -2;
+        }
 
         if (llm_arch_is_dsv4(lctx.model.arch) &&
             llama_dsv4_per_step_capture_active(lctx, { LLAMA_CHECKPOINT_SPEC, 0, 0 }) &&
@@ -9052,6 +9071,7 @@ struct llama_context_params llama_context_default_params() {
         /*.logits_all                  =*/ false,
         /*.embeddings                  =*/ false,
         /*.offload_kqv                 =*/ true,
+        /*.pi5_minicpm                 =*/ false,
         /*.flash_attn                  =*/ true,
         /*.mla_attn                    =*/ 3,
         /*.attn_max_batch              =*/ 256,
@@ -9589,6 +9609,7 @@ struct llama_context * llama_init_from_model(
     cparams.defrag_thold     = params.defrag_thold;
     cparams.embeddings       = params.embeddings;
     cparams.offload_kqv      = params.offload_kqv;
+    cparams.pi5_minicpm      = params.pi5_minicpm;
     cparams.flash_attn       = params.flash_attn;
     cparams.mla_attn         = params.mla_attn;
     cparams.attn_max_batch   = params.attn_max_batch;
@@ -9783,6 +9804,28 @@ struct llama_context * llama_init_from_model(
         model->arch != LLM_ARCH_QWEN4EXP &&
         cparams.mtp != 0) {
         cparams.mtp = 0;
+    }
+
+    if (cparams.pi5_minicpm) {
+        bool supported = false;
+#if defined(__aarch64__)
+        supported = model->arch == LLM_ARCH_LLAMA && hparams.n_layer == 42 && hparams.n_embd == 2048 &&
+            model->n_gpu_layers == 0 && cparams.flash_attn && cparams.mla_attn == 0 &&
+            cparams.n_seq_max == 1 && cparams.n_threads == 2 && cparams.n_threads_batch == 4 &&
+            params.type_k == GGML_TYPE_F16 && params.type_v == GGML_TYPE_F16 &&
+            params.n_k_first <= 0 && params.n_k_last <= 0 && params.n_v_first <= 0 && params.n_v_last <= 0 &&
+            !cparams.k_cache_hadamard && !cparams.v_cache_hadamard && !cparams.swa_compress;
+        for (uint32_t il = 0; supported && il < hparams.n_layer; ++il) {
+            supported = hparams.n_head(il) == 16 && hparams.n_head_kv(il) == 2 &&
+                hparams.n_embd_head_k(il) == 128 && hparams.n_embd_head_v(il) == 128;
+        }
+#endif
+        if (!supported) {
+            LLAMA_LOG_ERROR("%s: unsupported --pi5-minicpm configuration (requires AArch64, MiniCPM5-2B, CPU, F16 KV, FA, -np 1 -t 2 -tb 4)\n", __func__);
+            llama_free(ctx);
+            return nullptr;
+        }
+        LLAMA_LOG_INFO("%s: Pi 5 MiniCPM profile: head-contiguous F16 KV; adaptive decode at 4096 retained tokens\n", __func__);
     }
 
     cparams.mtp_op_type = params.mtp_op_type;
@@ -11787,7 +11830,16 @@ struct llama_data_write {
             for (const auto & range : cell_ranges) {
                 const size_t range_size = range.second - range.first;
                 const size_t buf_size = range_size * k_size_row;
-                write_tensor_data(kv_self.k_l[il], range.first * k_size_row, buf_size, il);
+                if (ctx->cparams.pi5_minicpm) {
+                    const size_t row = k_size_row / 2;
+                    for (uint32_t token = range.first; token < range.second; ++token) {
+                        for (size_t head = 0; head < 2; ++head) {
+                            write_tensor_data(kv_self.k_l[il], (head * kv_self.rows(il) + token) * row, row, il);
+                        }
+                    }
+                } else {
+                    write_tensor_data(kv_self.k_l[il], range.first * k_size_row, buf_size, il);
+                }
             }
         }
 
@@ -11820,7 +11872,16 @@ struct llama_data_write {
                 for (const auto & range : cell_ranges) {
                     const size_t range_size = range.second - range.first;
                     const size_t buf_size = range_size * v_size_row;
-                    write_tensor_data(kv_self.v_l[il], range.first * v_size_row, buf_size, il);
+                    if (ctx->cparams.pi5_minicpm) {
+                        const size_t row = v_size_row / 2;
+                        for (uint32_t token = range.first; token < range.second; ++token) {
+                            for (size_t head = 0; head < 2; ++head) {
+                                write_tensor_data(kv_self.v_l[il], (head * kv_self.rows(il) + token) * row, row, il);
+                            }
+                        }
+                    } else {
+                        write_tensor_data(kv_self.v_l[il], range.first * v_size_row, buf_size, il);
+                    }
                 }
             }
         }
@@ -12604,8 +12665,16 @@ struct llama_data_read {
             const uint32_t k_dst     = k_compact ? kv_self.sink_rows  : kv_self.head;
 
             if (k_rows) {
-                // Read and set the keys for the whole cell range
-                if (kv_self.k_l[il]->extra) {
+                // Restore canonical token-major state into the physical head-major cache.
+                if (ctx->cparams.pi5_minicpm) {
+                    const size_t row = k_size_row / 2;
+                    for (uint32_t token = 0; token < k_rows; ++token) {
+                        for (size_t head = 0; head < 2; ++head) {
+                            ggml_backend_tensor_set(kv_self.k_l[il], read(row),
+                                    (head * kv_self.rows(il) + k_dst + token) * row, row);
+                        }
+                    }
+                } else if (kv_self.k_l[il]->extra) {
                     read_kv_cache_data_split(ctx, kv_self.k_l[il], read(k_rows * k_size_row), k_dst, k_size_row, k_rows, il);
                 } else {
                     ggml_backend_tensor_set(kv_self.k_l[il], read(k_rows * k_size_row), k_dst * k_size_row, k_rows * k_size_row);
@@ -12655,8 +12724,16 @@ struct llama_data_read {
                 const uint32_t v_dst     = v_compact ? kv_self.sink_rows  : kv_self.head;
 
                 if (v_rows) {
-                    // Read and set the values for the whole cell range
-                    if (kv_self.v_l[il]->extra) {
+                    // Restore canonical token-major state into the physical head-major cache.
+                    if (ctx->cparams.pi5_minicpm) {
+                        const size_t row = v_size_row / 2;
+                        for (uint32_t token = 0; token < v_rows; ++token) {
+                            for (size_t head = 0; head < 2; ++head) {
+                                ggml_backend_tensor_set(kv_self.v_l[il], read(row),
+                                        (head * kv_self.rows(il) + v_dst + token) * row, row);
+                            }
+                        }
+                    } else if (kv_self.v_l[il]->extra) {
                         read_kv_cache_data_split(ctx, kv_self.v_l[il], read(v_rows * v_size_row), v_dst, v_size_row, v_rows, il);
                     } else {
                         ggml_backend_tensor_set(kv_self.v_l[il], read(v_rows * v_size_row), v_dst * v_size_row, v_rows * v_size_row);

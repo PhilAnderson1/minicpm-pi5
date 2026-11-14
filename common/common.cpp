@@ -2141,6 +2141,10 @@ bool gpt_params_find_arg(int argc, char ** argv, const std::string & arg, gpt_pa
         else invalid_param = true;
         return true;
     }
+    if (arg == "--pi5-minicpm") {
+        params.pi5_minicpm = true;
+        return true;
+    }
     if (arg == "-no-fa" || arg == "--no-flash-attn") {
         params.flash_attn = false;
         return true;
@@ -3414,6 +3418,7 @@ void gpt_params_print_usage(int /*argc*/, char ** argv, const gpt_params & param
     options.push_back({ "*",           "       --keep N",               "number of tokens to keep from the initial prompt (default: %d, -1 = all)", params.n_keep });
     options.push_back({ "*",           "       --chunks N",             "max number of chunks to process (default: %d, -1 = all)", params.n_chunks });
     options.push_back({ "*", "--nvfp4-precision (auto|w4a4|int8)", "NVFP4 matmul precision on Blackwell (default: auto). w4a4: 4-bit activations, fastest, lower accuracy. int8: 8-bit activations, more accurate. auto: w4a4 when the model has input scales, unless it is marked W4A16 or has imatrix data; older ggml-org/llama.cpp W4A16 conversions may need int8." });
+    options.push_back({ "*", "--pi5-minicpm", "enable Pi 5 MiniCPM5-2B CPU profile (F16 KV, -np 1, -t 2 -tb 4)" });
     options.push_back({ "*",           "-no-fa, --no-flash-attn",       "disable Flash Attention (default: %s)", params.flash_attn ? "enabled" : "disabled" });
     options.push_back({ "*",           "-fa, --flash-attn (auto|on|off|0|1)", "set Flash Attention (default: %s)", params.flash_attn ? "on" : "off" });
     options.push_back({ "*",           "-mla,  --mla-use",              "enable MLA (default: %d)", params.mla_attn });
@@ -4801,6 +4806,7 @@ struct llama_context_params common_context_params_to_llama(const gpt_params & pa
     cparams.cb_eval           = params.cb_eval;
     cparams.cb_eval_user_data = params.cb_eval_user_data;
     cparams.offload_kqv       = !params.no_kv_offload;
+    cparams.pi5_minicpm       = params.pi5_minicpm;
     cparams.flash_attn        = params.flash_attn;
     cparams.mla_attn          = params.mla_attn;
     cparams.attn_max_batch    = params.attn_max_batch;

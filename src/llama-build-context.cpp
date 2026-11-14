@@ -218,6 +218,11 @@ ggml_cgraph * llm_build_context::build_k_shift() {
                     n_head_kv*ggml_row_size(kv_self.k_l[il]->type, n_embd_head_k_l),
                     0);
 
+        if (cparams.pi5_minicpm) {
+            const size_t row = ggml_row_size(k->type, n_embd_head_k_l);
+            k = ggml_view_3d(ctx0, kv_self.k_l[il], n_embd_head_k_l, n_head_kv, n_ctx,
+                    row * kv_self.rows(il), row, 0);
+        }
         struct ggml_tensor * tmp;
         if (ggml_is_quantized(k->type)) {
             // dequantize to f32 -> RoPE -> quantize back
@@ -408,6 +413,18 @@ ggml_cgraph * llm_build_context::build_defrag(const std::vector<uint32_t> & ids)
             }
             const int64_t n_embd_k_gqa = hparams.n_embd_k_gqa(il);
             const int64_t n_embd_v_gqa = hparams.n_embd_v_gqa(il);
+
+            if (cparams.pi5_minicpm) {
+                const size_t row = ggml_row_size(kv_self.k_l[il]->type, 128);
+                const size_t stride = row * kv_self.rows(il);
+                auto * view_k_src = ggml_view_3d(ctx0, kv_self.k_l[il], 128, nm, 2, row, stride, row*i);
+                auto * view_k_dst = ggml_view_3d(ctx0, kv_self.k_l[il], 128, nm, 2, row, stride, row*id);
+                auto * view_v_src = ggml_view_3d(ctx0, kv_self.v_l[il], 128, nm, 2, row, stride, row*i);
+                auto * view_v_dst = ggml_view_3d(ctx0, kv_self.v_l[il], 128, nm, 2, row, stride, row*id);
+                ggml_build_forward_expand(gf, ggml_cpy(ctx0, view_k_src, view_k_dst));
+                ggml_build_forward_expand(gf, ggml_cpy(ctx0, view_v_src, view_v_dst));
+                continue;
+            }
 
             ggml_tensor * view_k_src = ggml_view_2d(ctx0, kv_self.k_l[il],
                     n_embd_k_gqa, nm,
@@ -1046,8 +1063,12 @@ void llm_build_context::llm_build_kv_store(
         ggml_tensor * k_cache_view = ggml_view_2d(ctx, kv.k_l[il], n_embd_head_k, n_tokens*n_head_kv,
                 k_row_size, k_row_size*n_head_kv*kv_head);
 
+        if (cparams.pi5_minicpm) {
+            k_cache_view = ggml_view_3d(ctx, kv.k_l[il], n_embd_head_k, n_head_kv, n_tokens,
+                    k_row_size*n_cache_rows, k_row_size, k_row_size*kv_head);
+        }
         lctx.cache_copies[2*il+0].cpy  = ggml_cpy(ctx, k_cur, k_cache_view);
-        lctx.cache_copies[2*il+0].step = k_row_size*n_head_kv;
+        lctx.cache_copies[2*il+0].step = k_row_size*(cparams.pi5_minicpm ? 1 : n_head_kv);
 
         // note: storing RoPE-ed version of K in the KV cache
         ggml_build_forward_expand(graph, lctx.cache_copies[2*il+0].cpy);
@@ -1071,6 +1092,12 @@ void llm_build_context::llm_build_kv_store(
                 v_cur = ggml_reshape_2d(ctx, v_cur, n_embd_v_gqa, n_tokens);
             }
             v_cur = ggml_transpose(ctx, v_cur);
+        }
+        if (cparams.pi5_minicpm) {
+            const auto row = ggml_row_size(kv.v_l[il]->type, hparams.n_embd_head_v(il));
+            v_cache_view = ggml_view_3d(ctx, kv.v_l[il], hparams.n_embd_head_v(il), n_head_kv, n_tokens,
+                    row*n_cache_rows, row, row*kv_head);
+            lctx.cache_copies[2*il+1].step = row;
         }
         cb(v_cache_view, "v_cache_view", il);
 
@@ -2694,6 +2721,11 @@ static ggml_tensor * llm_build_kqv(
                     ggml_row_size(k_cache->type, n_embd_head_k)*n_head_kv, //n_embd_k_gqa),
                     ggml_row_size(k_cache->type, n_embd_head_k),
                     (size_t) kv_view_offset*ggml_row_size(k_cache->type, n_embd_head_k)*n_head_kv);
+        if (cparams.pi5_minicpm) {
+            const auto row = ggml_row_size(k_cache->type, n_embd_head_k);
+            k = ggml_view_3d(ctx, k_cache, n_embd_head_k, n_kv, n_head_kv,
+                    row, row*n_cache_rows, row*kv_view_offset);
+        }
         if (k_cache_view) {
             *k_cache_view = k;
         }
@@ -2735,6 +2767,11 @@ static ggml_tensor * llm_build_kqv(
                         ggml_row_size(v_cache->type, n_embd_v_gqa),
                         ggml_row_size(v_cache->type, n_embd_head_v),
                         (size_t) kv_view_offset*ggml_row_size(v_cache->type, n_embd_v_gqa));
+            if (cparams.pi5_minicpm) {
+                const auto row = ggml_row_size(v_cache->type, n_embd_head_v);
+                v = ggml_view_3d(ctx, v_cache, n_embd_head_v, n_kv, n_head_kv,
+                        row, row*n_cache_rows, row*kv_view_offset);
+            }
             if (v_cache_view) {
                 *v_cache_view = v;
             }

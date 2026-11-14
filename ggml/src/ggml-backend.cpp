@@ -806,6 +806,7 @@ struct ggml_backend_cpu_context {
     void *              abort_callback_data;
 
     bool moe_expert_prefetch;
+    bool pi5_minicpm;
 
     // optional per-thread CPU affinity
     int32_t cpu_affinity[GGML_MAX_CPU_AFFINITY];
@@ -855,6 +856,7 @@ GGML_CALL static ggml_backend_graph_plan_t ggml_backend_cpu_graph_plan_create(gg
     cpu_plan->cplan.abort_callback      = cpu_ctx->abort_callback;
     cpu_plan->cplan.abort_callback_data = cpu_ctx->abort_callback_data;
     cpu_plan->cplan.moe_expert_prefetch = cpu_ctx->moe_expert_prefetch;
+    cpu_plan->cplan.pi5_minicpm = cpu_ctx->pi5_minicpm;
     cpu_plan->cplan.cpu_affinity        = cpu_ctx->cpu_affinity;
     cpu_plan->cplan.n_cpu_affinity      = cpu_ctx->n_cpu_affinity;
 
@@ -897,6 +899,7 @@ GGML_CALL static enum ggml_status ggml_backend_cpu_graph_compute(ggml_backend_t 
     cplan.abort_callback      = cpu_ctx->abort_callback;
     cplan.abort_callback_data = cpu_ctx->abort_callback_data;
     cplan.moe_expert_prefetch = cpu_ctx->moe_expert_prefetch;
+    cplan.pi5_minicpm = cpu_ctx->pi5_minicpm;
     cplan.cpu_affinity        = cpu_ctx->cpu_affinity;
     cplan.n_cpu_affinity      = cpu_ctx->n_cpu_affinity;
 
@@ -978,6 +981,7 @@ ggml_backend_t ggml_backend_cpu_init(void) {
     ctx->abort_callback      = NULL;
     ctx->abort_callback_data = NULL;
     ctx->moe_expert_prefetch = false;
+    ctx->pi5_minicpm = false;
     ctx->n_cpu_affinity      = 0;
 
     ggml_backend_t cpu_backend = (ggml_backend_t)malloc(sizeof(struct ggml_backend));
@@ -996,6 +1000,11 @@ ggml_backend_t ggml_backend_cpu_init(void) {
 
 GGML_CALL bool ggml_backend_is_cpu(ggml_backend_t backend) {
     return backend != NULL && ggml_guid_matches(backend->guid, ggml_backend_cpu_guid());
+}
+
+void ggml_backend_cpu_set_pi5_minicpm(ggml_backend_t backend_cpu, bool enabled) {
+    GGML_ASSERT(ggml_backend_is_cpu(backend_cpu));
+    ((ggml_backend_cpu_context *)backend_cpu->context)->pi5_minicpm = enabled;
 }
 
 void ggml_backend_cpu_set_n_threads(ggml_backend_t backend_cpu, int n_threads) {

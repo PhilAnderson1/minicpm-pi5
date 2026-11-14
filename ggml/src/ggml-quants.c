@@ -4055,8 +4055,9 @@ void quantize_row_q8_K_ref(const float * restrict x, block_q8_K * restrict y, in
             }
         }
         if (!amax) {
-            y[i].d = 0;
-            memset(y[i].qs, 0, QK_K);
+            // Clear sums too: Q8_K32 stores pre-scaled sums, so d == 0
+            // alone cannot prevent stale scratch data affecting a dot product.
+            memset(&y[i], 0, sizeof(y[i]));
             x += QK_K;
             continue;
         }
@@ -4067,14 +4068,17 @@ void quantize_row_q8_K_ref(const float * restrict x, block_q8_K * restrict y, in
             int v = nearest_int(iscale*x[j]);
             y[i].qs[j] = MIN(127, v);
         }
+        int total = 0;
         for (int j = 0; j < QK_K/16; ++j) {
             int sum = 0;
             for (int ii = 0; ii < 16; ++ii) {
                 sum += y[i].qs[j*16 + ii];
             }
             y[i].bsums[j] = sum;
+            total += sum;
         }
         y[i].d = 1/iscale;
+        y[i].sum = y[i].d * total;
         x += QK_K;
     }
 }

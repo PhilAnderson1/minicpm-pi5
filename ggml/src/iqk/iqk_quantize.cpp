@@ -4475,8 +4475,9 @@ void iqk_quantize_row_q8_K_T(const float * x, void * vy, int64_t k) {
             }
         }
         if (!amax) {
-            y[i].d = 0;
-            memset(y[i].qs, 0, QK_K);
+            // Clear sums too: Q8_K32 stores pre-scaled sums, so d == 0
+            // alone cannot prevent stale scratch data affecting a dot product.
+            memset(&y[i], 0, sizeof(y[i]));
             x += QK_K;
             continue;
         }

@@ -102,6 +102,7 @@ extern "C" {
     GGML_API ggml_backend_t ggml_backend_cpu_init(void);
 
     GGML_API GGML_CALL bool ggml_backend_is_cpu                (ggml_backend_t backend);
+    GGML_API           void ggml_backend_cpu_set_pi5_minicpm(ggml_backend_t backend_cpu, bool enabled);
     GGML_API           void ggml_backend_cpu_set_n_threads     (ggml_backend_t backend_cpu, int n_threads);
     GGML_API           void ggml_backend_cpu_set_moe_expert_prefetch(ggml_backend_t backend_cpu, bool enable);
     GGML_API           void ggml_backend_cpu_set_cpu_affinity  (ggml_backend_t backend_cpu, const int32_t * cpus, int n_cpus);

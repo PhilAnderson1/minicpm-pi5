@@ -533,6 +533,7 @@ extern "C" {
         bool logits_all;  // the llama_decode() call computes all logits, not just the last one (DEPRECATED - set llama_batch.logits instead)
         bool embeddings;  // if true, extract embeddings (together with logits)
         bool offload_kqv; // whether to offload the KQV ops (including the KV cache) to GPU
+        bool pi5_minicpm; // opt-in CPU MiniCPM5-2B profile; F16 KV, single sequence
         bool flash_attn;  // whether to use flash attention [EXPERIMENTAL]
         int  mla_attn;    // whether to use MLA attention [EXPERIMENTAL]
         int  attn_max_batch;    // maximum batch size for attention computations [EXPERIMENTAL]
@@ -1205,6 +1206,7 @@ extern "C" {
     // Positive return values does not mean a fatal error, but rather a warning.
     //   0 - success
     //   1 - could not find a KV slot for the batch (try reducing the size of the batch or increase the context)
+    //  -3 - canceled; Pi 5 profile removes incomplete microbatch cells
     // < 0 - error
     LLAMA_API int32_t llama_decode(
             struct llama_context * ctx,

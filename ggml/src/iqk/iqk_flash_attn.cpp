@@ -146,11 +146,43 @@ bool iqk_fa_indexed_kv_heads_rows(int int_type_k, int int_type_v, int Dk, int Dv
 }
 }
 
+// Four independent groups of four query heads reuse the stock FP16 kernel.
+static bool pi5_attention(int nk,long nbq,long nbk,long nbv,long nbo,int sk,int sv,
+        const float *q,const char *k,const char *v,const ggml_fp16_t *mask,float scale,
+        float *out,void *work,barrier_t barrier,void *barrier_data,int ith,int nth) {
+    constexpr int group = 4, part_size = (128 + 16) * group;
+    for (int task = ith; task < 4; task += nth) {
+        const int first = task * group, kh = first / 8;
+        float *part = (float *)work + task * part_size;
+        bool ok = iqk_flash_attn_impl(GGML_TYPE_F16, GGML_TYPE_F16, 128, 128, group, nk,
+                nbq, sk, sv, 0, 128, (const float *)((const char *)q + first * nbq),
+                k + kh * nbk, v + kh * nbv, mask, nullptr, 0, scale, 0,
+                part, part + 128 * group, part + 129 * group);
+        GGML_ASSERT(ok);
+    }
+    barrier(barrier_data);
+    for (int head = ith; head < 16; head += nth) {
+        const int gi = head / group, offset = head % group;
+        const float *part = (float *)work + gi * part_size;
+        float *dst = (float *)((char *)out + head * nbo), m = -INFINITY, sum = 0;
+        accumulate_qkv(128, m, sum, part[128 * group + offset], part[129 * group + offset], dst, part + offset * 128);
+        const float norm = sum > 0 ? 1 / sum : 0;
+        for (int d = 0; d < 128; ++d) dst[d] = sum > 0 ? dst[d] * norm : 0;
+    }
+    return true;
+}
+
 size_t iqk_fa_work_buffer_size(const struct ggml_tensor * dst, int nth) {
     auto Q = dst->src[0];
     auto K = dst->src[1];
     auto V = dst->src[2];
     auto indexer = dst->src[5];
+    // Reserve all experiment modes independent of the current switch, making
+    // graph reuse safe when a completed decode changes the selected algorithm.
+    if (Q->ne[0]==128 && Q->ne[1]==1 && Q->ne[2]==16 && Q->ne[3]==1 &&
+        K->ne[2]==2 && V->ne[2]==2 && K->type==GGML_TYPE_F16 && V->type==GGML_TYPE_F16) {
+        return size_t((K->ne[1]+63)/64)*16*(128+16)*sizeof(float);
+    }
     // must match the sparse entry in iqk_flash_attn_noalibi (an unsupported K/V type enters it there, then aborts)
     if (indexer && indexer->type == GGML_TYPE_I32 && indexer->ne[0] < K->ne[1] && indexer->ne[0] % 32 == 0 && dst->src[3] &&
         Q->ne[3] == 1 && K->ne[3] == 1 && V->ne[3] == 1 &&
@@ -260,9 +292,11 @@ extern "C" IQK_API bool iqk_flash_attn_noalibi(int type_q, int type_mask, float 
                             float         softcap,  // if > 0, a "soft-cap" operation is applied before softmax
                             float       * qkv,      // v*softmax(scale*(k*q))
                             [[maybe_unused]] void * work_buffer_in, [[maybe_unused]] barrier_t barrier, [[maybe_unused]] void * barrier_data,
-                            int ith, int nth, int n_swa, [[maybe_unused]] ggml_tensor * indexer) {
+                            int ith, int nth, int n_swa, [[maybe_unused]] ggml_tensor * indexer, bool pi5_minicpm) {
 
     if (type_q != 0 || type_mask != 1 || max_bias > 0) return false;
+
+
 
     if (indexer && indexer->type == GGML_TYPE_I32) {
         // an unsupported K/V type must reach the abort below, as without the indexer, not the generic indexer path
@@ -470,6 +504,14 @@ extern "C" IQK_API bool iqk_flash_attn_noalibi(int type_q, int type_mask, float 
             mask = (const void *)((const uint16_t *)mask + first_k);
             nek1 = last_k - first_k;
         }
+    }
+
+    if (pi5_minicpm && nth == 4 && int_type_k_in==GGML_TYPE_F16 && int_type_v==GGML_TYPE_F16 &&
+        Dk==128 && Dv==128 && neq1==1 && neq2==16 && neq3==1 && nek2==2 && nek3==1 && nev2==2 && nev3==1 &&
+        !sinks && !indexer && n_swa==0 && softcap==0 && mask && nek1%32==0) {
+        return pi5_attention(nek1,nbq2,nbk2,nbv2,nb1,stride_k,stride_v,
+            (const float*)q,(const char*)k,(const char*)v,(const ggml_fp16_t*)mask,scale,
+            qkv,work_buffer_in,barrier,barrier_data,ith,nth);
     }
 
     int int_type_k = int_type_k_in;
@@ -764,7 +806,7 @@ bool iqk_flash_attn_noalibi([[maybe_unused]] int type_q, [[maybe_unused]] int ty
                             [[maybe_unused]] float         softcap,  // if > 0, a "soft-cap" operation is applied before softmax
                             [[maybe_unused]] float       * qkv,      // v*softmax(scale*(k*q))
                             [[maybe_unused]] void * work_buffer, [[maybe_unused]] barrier_t barrier, [[maybe_unused]] void * barrier_data,
-                            [[maybe_unused]] int ith, [[maybe_unused]] int nth, [[maybe_unused]] int n_swa, [[maybe_unused]] ggml_tensor * indexer) {
+                            [[maybe_unused]] int ith, [[maybe_unused]] int nth, [[maybe_unused]] int n_swa, [[maybe_unused]] ggml_tensor * indexer, bool pi5_minicpm) {
     return false;
 }
 

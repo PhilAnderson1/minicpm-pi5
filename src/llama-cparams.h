@@ -30,6 +30,7 @@ struct llama_cparams {
     bool embeddings;
     bool causal_attn;
     bool offload_kqv;
+    bool pi5_minicpm = false;
     bool flash_attn;
     int  mla_attn;
     int  attn_max_batch;
