@@ -3,9 +3,9 @@
 // FP16 scaling and per-output FMA order match the generic 16-value kernel.
 #ifdef __aarch64__
 namespace {
-template <int q_step, int k_step>
+template <int q_step, int k_step, bool external_scores>
 inline void pi5_accumulate_values_128(float16_t * qkv_cache,
-        const HelperF16& vh, const FlashMS<q_step, k_step>& fms) {
+        const HelperF16& vh, const FlashMS<q_step, k_step, external_scores>& fms) {
     constexpr int D = 128;
     for (int j = 0; j < q_step; ++j) {
         auto R = qkv_cache + D*j;

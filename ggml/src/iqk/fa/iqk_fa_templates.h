@@ -738,7 +738,7 @@ struct HelperQ60 final : public BaseHelper {
 #endif
 };
 
-template <int q_step_in, int k_step_in>
+template <int q_step_in, int k_step_in, bool external_scores = false>
 struct FlashMS {
     constexpr static int q_step = q_step_in;
     constexpr static int k_step = k_step_in;
@@ -961,7 +961,9 @@ struct FlashMS {
     }
 #endif
 
-    cache_t cache[q_step*k_step];
+    // Default kernels retain their inline score array. Pi prefill can borrow
+    // per-worker scratch because scores do not survive the current KV block.
+    std::conditional_t<external_scores, cache_t *, cache_t[q_step*k_step]> cache;
     float S[q_step], M[q_step];
     int need_scaling[q_step];
     float vms[q_step];
@@ -1258,9 +1260,9 @@ struct FlashQKfp32 {
     static_assert(k_step%F16::block_size == 0);
     static_assert(q_step <= 4 || q_step%4 == 0);
 
-    template <typename KHelper, typename q_float>
+    template <typename KHelper, typename q_float, bool external_scores>
     static inline void multiply_mask_kq(const KHelper& kh, int stride_q, int stride_m, const q_float * q, const char * mask,
-            FlashMS<q_step, k_step>& fms) {
+            FlashMS<q_step, k_step, external_scores>& fms) {
 #ifdef __AVX2__
         constexpr int nrc_k = 8;
         static_assert(k_step%nrc_k == 0);
@@ -1277,9 +1279,9 @@ struct FlashQKfp32 {
         }
     }
 
-    template <typename KHelper, typename q_float>
+    template <typename KHelper, typename q_float, bool external_scores>
     static inline void multiply_mask_kq(int nq, const KHelper& kh, int stride_q, int stride_m, const q_float * q, const char * mask,
-            FlashMS<q_step, k_step>& fms) {
+            FlashMS<q_step, k_step, external_scores>& fms) {
 #ifdef __AVX2__
         constexpr int nrc_k = 8;
         static_assert(k_step%nrc_k == 0);

@@ -8,6 +8,13 @@
 
 #include <cstdint>
 
+#ifdef __aarch64__
+void iqk_pi5_prefill_128(int nq, int nk, int stride_q, int stride_k, int stride_v, int stride_m,
+        long head_q, long head_k, long head_v, long head_out,
+        const void * q, const void * k, const void * v, const void * mask,
+        float scale, float * out, int ith);
+#endif
+
 bool iqk_flash_attn_impl(int type_k,             // type of k
                          int type_v,             // type of v
                          int Dk,                 // K head size

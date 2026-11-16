@@ -15,7 +15,7 @@ export OMP_PROC_BIND=close OMP_PLACES=cores OMP_WAIT_POLICY=PASSIVE
 
 - `integration_test MODEL short`: real prefill, bidirectional layout/state
   restore, shift, defragmentation and interrupted-operation recovery.
-- `integration_test MODEL`: adds 4K/8K worker-boundary cancellation cases and
+- `integration_test MODEL`: adds 4K/8K worker-boundary cancellation, retained-prefix prefill recovery and
   synthetic 24K canonical/in-memory state restore. It creates a unique temporary
   ~1 GiB file under `$TMPDIR` (default `/tmp`), removed on normal completion.
   A failed/aborted process can leave that file behind. Capacity results can page

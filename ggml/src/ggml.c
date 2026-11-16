@@ -23938,7 +23938,8 @@ static void ggml_compute_forward_flash_attn_ext_f16(
                 q->data, k->data, v->data, mask ? mask->data : NULL, sinks ? sinks->data : NULL,
                 scale, softcap, (float *)dst->data,
                 params->wdata, (barrier_t)ggml_barrier, (void *)params->shared, ith, nth, dst->op_params[4],
-                dst->src[5], params->shared->pi_subset != NULL)) return;
+                dst->src[5], params->shared->pi_subset != NULL ||
+                    (params->shared->cplan->pi5_minicpm && params->shared->n_batch > 1))) return;
 
 //    if (max_bias <= 0.0f && q->type == GGML_TYPE_F32 && mask && mask->type == GGML_TYPE_F16) {
 //        //if (ith == 0) printf("k: %ld x %ld x %ld, q: %ld x %ld x %ld, v: %ld x %ld x %ld mask: %ld x %ld x %ld\n",

@@ -17,3 +17,5 @@ to historical private builds; there are no such global switches in this engine.
   including raw samples, provenance and reproduction instructions.
 - `decode-23k/`: matched 23,552-token decode comparison with raw repetitions
   and exact-logit checks.
+
+- `kv-prefill/`: incremental KV-reuse prefill measurements and candidate validation.

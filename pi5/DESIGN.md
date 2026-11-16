@@ -34,6 +34,13 @@ reusing converted softmax weights. It retains the previous per-output key order
 and scaling. Both are shape-selected ARM paths and can affect compatible calls
 without `--pi5-minicpm`; they are not claimed to improve other ARM processors.
 
+With `--pi5-minicpm`, supported prefill shapes reuse each 128-key block across
+four query heads per worker, processing 64 query rows per head. Independent
+softmax and output state survives between blocks; score scratch is shared within
+the worker. This preserves arithmetic order and FP16 KV. The path requires four
+workers, D128, 16 query heads, two KV heads and aligned query/key lengths;
+unsupported shapes use the existing implementation. Decode scheduling is unchanged.
+
 The activation quantizer now initializes metadata for zero blocks. This is a
 correctness fix, not a KV quantization change. Runtime repacking still uses the
 model's Q4_K/Q6_K weight representations and their internal repacked equivalents.

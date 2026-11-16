@@ -7408,7 +7408,7 @@ static enum ggml_status llama_graph_compute(
 #endif
 
     if (lctx.backend_cpu != nullptr) {
-        ggml_backend_cpu_set_pi5_minicpm(lctx.backend_cpu, lctx.cparams.pi5_minicpm && n_threads == 4 && gf->n_batch == 1);
+        ggml_backend_cpu_set_pi5_minicpm(lctx.backend_cpu, lctx.cparams.pi5_minicpm && n_threads == 4 && gf->n_batch > 0);
         ggml_backend_cpu_set_n_threads(lctx.backend_cpu, n_threads);
         // KV maintenance must finish atomically with respect to cancellation:
         // a partially rotated or relocated retained cache cannot be rolled back.
@@ -7435,7 +7435,7 @@ static void llama_graph_compute_sched(
 #endif
 
     if (lctx.backend_cpu != nullptr) {
-        ggml_backend_cpu_set_pi5_minicpm(lctx.backend_cpu, lctx.cparams.pi5_minicpm && n_threads == 4 && gf->n_batch == 1);
+        ggml_backend_cpu_set_pi5_minicpm(lctx.backend_cpu, lctx.cparams.pi5_minicpm && n_threads == 4 && gf->n_batch > 0);
         ggml_backend_cpu_set_n_threads(lctx.backend_cpu, n_threads);
         ggml_backend_cpu_set_abort_callback(lctx.backend_cpu, lctx.abort_callback, lctx.abort_callback_data);
         ggml_backend_cpu_set_moe_expert_prefetch(lctx.backend_cpu, lctx.cparams.prefetch_experts);

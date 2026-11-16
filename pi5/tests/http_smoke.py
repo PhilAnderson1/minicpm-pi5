@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Run the preserved 24K/1GiB configuration on an isolated port, then stop it."""
-import argparse,json,os,subprocess,time,urllib.request,threading,sys,socket
+import argparse,hashlib,json,os,subprocess,time,urllib.request,threading,sys,socket
 from pathlib import Path
 repo=Path(__file__).resolve().parents[2]
 parser=argparse.ArgumentParser(description='Start a temporary Pi-profile server and test cache replay/cancellation. Stop other model processes first.')
@@ -28,6 +28,9 @@ with socket.socket() as probe:
     except OSError as exc:
         raise SystemExit(f'Cannot reserve test port {port}: {exc}. Check: ss -ltnp sport = :{port}') from exc
 result={'before':mem(),'requests':[]};done=threading.Event()
+build=Path(os.environ.get('MINICPM_PI5_BUILD_DIR',repo/'build-pi5'))
+result['artifacts']={str(p.resolve()):hashlib.sha256(p.read_bytes()).hexdigest()
+    for p in (build/'bin/llama-server',build/'src/libllama.so',build/'ggml/src/libggml.so') if p.is_file()}
 log=(root/'http-server.log').open('w')
 env=dict(os.environ,PORT=str(port),HOST='127.0.0.1')
 # Do not accidentally test a private experimental library inherited from a shell.
@@ -48,6 +51,7 @@ thread=threading.Thread(target=monitor,daemon=True);thread.start()
 def completion(label,prompt,timeout=1800):
     result['active']=label;print('starting:',label,flush=True)
     start=time.monotonic();r=request('/completion',{'prompt':prompt,'n_predict':8,'temperature':0,'seed':1,'cache_prompt':True,'ignore_eos':True},timeout=timeout)
+    assert r.get('timings',{}).get('n_ctx')==24576,'server context is not 24K'
     result['requests'].append({'label':label,'seconds':time.monotonic()-start,'response':r})
     (root/'http-result.json').write_text(json.dumps(result,indent=2))
     print(label,round(time.monotonic()-start,2),r.get('timings'),flush=True);return r
@@ -61,9 +65,13 @@ try:
     result['props']=request('/props')
     chat=request('/v1/chat/completions',{'model':'MiniCPM5','messages':[{'role':'user','content':'Answer briefly: what is two plus two?'}],'max_tokens':8,'temperature':0})
     assert chat.get('choices'),chat;result['chat']=chat
-    a='A quiet garden has roses and a pond. '*40
+    # More than one microbatch ensures the new complete-tile prefill path is
+    # exercised even if a short BOS/common prefix is reused from the chat.
+    a=request('/tokenize',{'content':'A quiet garden has roses and a pond. '*160,'add_special':True})['tokens'][:1024]
+    assert len(a)==1024,'test prompt is too short'
     b='A busy railway station has trains and passengers. '*40
     cold=completion('prompt A',a)
+    assert cold['timings']['prompt_n']>=512,'cold test did not exercise a full prefill microbatch'
     # Compare equivalent one-token replay paths: batched prefill can differ
     # from single-token replay even with the original library (cache-diagnosis/).
     first=completion('live replay prompt A',a)

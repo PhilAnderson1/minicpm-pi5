@@ -506,6 +506,17 @@ extern "C" IQK_API bool iqk_flash_attn_noalibi(int type_q, int type_mask, float 
         }
     }
 
+#ifdef __aarch64__
+    if (pi5_minicpm && nth == 4 && int_type_k_in == GGML_TYPE_F16 && int_type_v == GGML_TYPE_F16 &&
+        Dk == 128 && Dv == 128 && neq1 >= 64 && neq1%64 == 0 && nek1 > 0 && nek1%128 == 0 &&
+        neq2 == 16 && neq3 == 1 && nek2 == 2 && nek3 == 1 && nev2 == 2 && nev3 == 1 && ne1 == 16 &&
+        !sinks && !indexer && n_swa == 0 && softcap == 0 && mask) {
+        iqk_pi5_prefill_128(neq1, nek1, stride_q, stride_k, stride_v, stride_m,
+                nbq2, nbk2, nbv2, nb1, q, k, v, mask, scale, qkv, ith);
+        return true;
+    }
+#endif
+
     if (pi5_minicpm && nth == 4 && int_type_k_in==GGML_TYPE_F16 && int_type_v==GGML_TYPE_F16 &&
         Dk==128 && Dv==128 && neq1==1 && neq2==16 && neq3==1 && nek2==2 && nek3==1 && nev2==2 && nev3==1 &&
         !sinks && !indexer && n_swa==0 && softcap==0 && mask && nek1%32==0) {

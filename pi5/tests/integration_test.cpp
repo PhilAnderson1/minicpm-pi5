@@ -110,6 +110,20 @@ int main(int argc,char**argv){
    llama_set_abort_callback(b,nullptr,nullptr);check(b->kv_self.used==uint32_t(depth),"mixed abort retained cells");
    check(!eval(b,depth),"mixed abort recovery");same(baseline,logits(b,v),"mixed cancellation recovery");llama_kv_cache_seq_rm(b,0,depth,-1);
   }
+  if(depth==8192){
+   // Exercise the context-owned prefill path after a long retained prefix,
+   // including cancellation after earlier layers have already written KV.
+   auto before=save(b);
+   check(!eval(a,depth,64),"long generic prefill reference");auto expected=logits(a,v);
+   for(int stop:{1,17,128}){
+    restore(b,before);Abort ab{0,stop};llama_set_abort_callback(b,abort_cb,&ab);
+    check(eval(b,depth,64)==-3,"long prefill abort status");
+    llama_set_abort_callback(b,nullptr,nullptr);check(ab.team==4,"long prefill team");
+    check(save(b)==before,"long prefill retained cache");
+    check(!eval(b,depth,64),"long prefill recovery");
+    same(expected,logits(b,v),"long prefill cancellation recovery");
+   }
+  }
  }
  llama_free(a);llama_free(b);
  // The file is private, unique and removed automatically after normal completion.
