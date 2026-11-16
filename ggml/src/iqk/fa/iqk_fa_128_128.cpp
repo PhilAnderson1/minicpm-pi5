@@ -4,6 +4,7 @@
 
 #include "iqk/fa/iqk_fa_templates.h"
 #include "iqk/fa/iqk_fa_128_value.h"
+#include "iqk/fa/iqk_fa_128_value_registers.h"
 #include "iqk/iqk_flash_impl.h"
 #include "iqk/fa/iqk_fa_128_prefill.h"
 

@@ -24,10 +24,10 @@ context:
 
 | Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
 |---|---:|---:|---:|
-| 1K | 42.23 tokens/s | 45.21 tokens/s | 7.1% |
-| 8K | 18.82 tokens/s | 23.57 tokens/s | 25.3% |
-| 15K | 12.11 tokens/s | 15.31 tokens/s | 26.5% |
-| 23K | 8.21 tokens/s | 10.96 tokens/s | 33.5% |
+| 1K | 42.00 tokens/s | 44.90 tokens/s | 6.9% |
+| 8K | 19.05 tokens/s | 25.67 tokens/s | 34.7% |
+| 15K | 12.24 tokens/s | 17.75 tokens/s | 45.0% |
+| 23K | 8.68 tokens/s | 13.22 tokens/s | 52.3% |
 
 Both comparisons use synthetic retained context and three alternating runs per
 engine. [Methods and raw results](pi5/PERFORMANCE.md).

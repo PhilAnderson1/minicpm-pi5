@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "checked_reference_bytes": 202905600,
+  "summary": [
+    {
+      "prefix_tokens": 0,
+      "batch_tokens": 128,
+      "ik_llama": 51.361236068495444,
+      "minicpm_pi5": 51.41364555837714,
+      "gain_percent": 0.10204094350807491
+    },
+    {
+      "prefix_tokens": 1024,
+      "batch_tokens": 128,
+      "ik_llama": 41.99968211884344,
+      "minicpm_pi5": 44.90394128358112,
+      "gain_percent": 6.914955109707055
+    },
+    {
+      "prefix_tokens": 8192,
+      "batch_tokens": 128,
+      "ik_llama": 19.048872763920205,
+      "minicpm_pi5": 25.666279990590237,
+      "gain_percent": 34.73910140868719
+    },
+    {
+      "prefix_tokens": 15360,
+      "batch_tokens": 128,
+      "ik_llama": 12.244573361634906,
+      "minicpm_pi5": 17.75290815284371,
+      "gain_percent": 44.98592665112935
+    },
+    {
+      "prefix_tokens": 23552,
+      "batch_tokens": 128,
+      "ik_llama": 8.67667941131616,
+      "minicpm_pi5": 13.216317425907187,
+      "gain_percent": 52.31999246935888
+    }
+  ],
+  "timed_major_faults": 0
+}

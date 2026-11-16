@@ -38,7 +38,7 @@ void iqk_pi5_prefill_128(int nq, int nk, int stride_q, int stride_k, int stride_
             for (auto & group : groups) {
                 FlashQKfp32<D, Q, K>::multiply_mask_kq(kh, D, stride_m, group.query,
                         (const char *)mask + group.row*stride_m + key*sizeof(ggml_fp16_t), group.ms);
-                pi5_accumulate_values_128<Q, K>(group.values.qkv_cache, vh, group.ms);
+                pi5_accumulate_values_registers_128(group.values.qkv_cache, vh, group.ms);
             }
             kh.next_block(K);
             vh.next_block(K);

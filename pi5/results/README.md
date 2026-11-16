@@ -19,3 +19,7 @@ to historical private builds; there are no such global switches in this engine.
   and exact-logit checks.
 
 - `kv-prefill/`: incremental KV-reuse prefill measurements and candidate validation.
+
+- `value-registers/`: incremental register-resident value kernel measurements and serving validation.
+
+- `prefill-registers-total/`: refreshed direct baseline versus 0.1.1~rc2 prefill comparison used in the README.

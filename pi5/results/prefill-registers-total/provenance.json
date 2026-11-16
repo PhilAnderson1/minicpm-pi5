@@ -1,0 +1,20 @@
+{
+  "baseline": "upstream 2a0832d7 plus zero-activation correctness fix",
+  "candidate": "0.1.1~rc2 clean package libraries",
+  "candidate_source_sha256": {
+    "ggml/src/iqk/fa/iqk_fa_128_128.cpp": "b4e5c70ad80297f0d5fd5c8e56aba255a651e6274971b8dca22f63f086d6e766",
+    "ggml/src/iqk/fa/iqk_fa_128_prefill.h": "3a79ec61c176381e0bf1bbdd8604c9ff8fc03a9deda65b7349b1e7c303e2fb46",
+    "ggml/src/iqk/fa/iqk_fa_128_value_registers.h": "579a0cb792bcc420a9c6e7633eb8f4f173ed7afed244aaa1f990e978547767cb",
+    "ggml/src/ggml.c": "7a93d257f66260bdb9b95c89b17f0fcf2ffed9e4e90936e50d170dd1400eed2e",
+    "src/llama.cpp": "99bf10b436fa29d301faa9f1182b43aec542af53c6bd4e1035f8f18c1a3ec3cc"
+  },
+  "peak_sampled_process_swap_kib": {
+    "rep0-minicpm_pi5": 0,
+    "rep2-ik_llama": 0,
+    "rep0-ik_llama": 0,
+    "rep1-ik_llama": 24112,
+    "rep2-minicpm_pi5": 0,
+    "rep1-minicpm_pi5": 0
+  },
+  "scope": "Preserved shared-library baseline versus mostly static package engine; includes build/linking differences."
+}

@@ -1,0 +1,55 @@
+{
+  "date_utc": "2026-11-16T16:57:08Z",
+  "architecture": "aarch64",
+  "model": "MiniCPM5-2B-Q4_K_M.gguf",
+  "model_sha256": "ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd",
+  "harness_sha256": "ba50022f97c794068dde88500596debd3b95cef1749ce2fed6ccd14b33749fb9",
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "context_capacity": 24576,
+  "threads": 2,
+  "batch_threads": 4,
+  "microbatch": 512,
+  "batch_tokens": 128,
+  "prefixes": [
+    0,
+    1024,
+    8192,
+    15360,
+    23552
+  ],
+  "repetitions": 3,
+  "governor": "ondemand",
+  "repacking": true,
+  "kv_type": "F16",
+  "prefix_type": "deterministic synthetic KV",
+  "openmp": {
+    "OMP_PROC_BIND": "close",
+    "OMP_PLACES": "cores",
+    "OMP_WAIT_POLICY": "PASSIVE"
+  },
+  "builds": {
+    "ik_llama": {
+      "library_sha256": {
+        "libllama.so": "62f0db9cdd371d93b8a1098b882d3a78c7a026136a8d5cd00720c5a79485d2f3",
+        "libggml.so": "c23ed33ea0bfc0e730fff8ea92dd6a805d9a438f9e35c95e2616b1c05dba8751"
+      },
+      "executable_sha256": "0645b461d980b1eadb0471ef4de05081c412c87000d19cdb851b0fd755273f77",
+      "source_head": "2a0832d7cb57fd63ef5966760ccfd6db3994a1d9"
+    },
+    "minicpm_pi5": {
+      "source_head": "91f9a85f7a4cb9bf8f16b700b5f9dc3d056acce4",
+      "source_worktree_modified": true,
+      "package_version": "0.1.1~rc2",
+      "library_sha256": {
+        "src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+        "ggml/src/libggml.a": "6ecf245edb6426838719e78127dd015dab73df68bb52c14ecd3312e5278ea515"
+      },
+      "executable_sha256": "2ab8d82fdee03335f5e380547e63e28196bff3a998f238de0bc1ea16d9fb5866",
+      "package_sha256": "1a8ced7744c9d42b9c9786812b3f27c93fd12edd2a607d936eca300122a29913"
+    }
+  },
+  "comparison_scope": "Preserved ik_llama.cpp shared-library baseline versus current mostly static package engine; includes linking/build differences.",
+  "baseline_linkage": "shared",
+  "candidate_linkage": "mostly static",
+  "runner_sha256": "f0ca0f09321d1fdfd8519e5291d8daad5fa27383366db2c93de8ed3f7a3b3d35"
+}

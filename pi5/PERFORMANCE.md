@@ -3,8 +3,8 @@
 Measurements were made on a 4 GB Raspberry Pi 5 with Cortex-A76 cores sampled at
 2.4 GHz, CPU inference, MiniCPM5-2B-Q4_K_M, runtime weight repacking, FP16 KV,
 24,576-token capacity, `-t 2 -tb 4`, and OpenMP `close`/`cores`/`PASSIVE`.
-Earlier experiments ran on 2026-11-13; the direct prefill comparison ran on
-2026-11-14. This is a single-machine experiment,
+Decode measurements date from 2026-11-13/14; the direct prefill comparison was
+refreshed on 2026-11-16 with the 0.1.1~rc2 engine. This is a single-machine experiment,
 not a multi-device study. Small differences, cold faults and memory pressure
 matter; the number of repetitions is deliberately reported.
 
@@ -45,37 +45,35 @@ recreate every historical binary, and it is not a long sustained-generation test
 
 ## Direct prefill comparison
 
-The final engine was compared directly with the same upstream baseline used in
-the earlier research: commit `2a0832d7` plus the zero-activation correctness fix.
-The final source matches `3ed2a774`. Both library builds use matching compiler
-flags; this measures the engine changes rather than static-linking differences.
+The current `0.1.1~rc2` package engine was compared with the preserved upstream
+baseline: commit `2a0832d7` plus the zero-activation correctness fix. The baseline
+uses shared libraries and the candidate uses the clean package's static engine
+libraries. This measures the two builds, including linking differences.
 
 | Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
 |---|---:|---:|---:|
-| Empty | 50.16 tokens/s | 51.28 tokens/s | 2.2% |
-| 1K | 42.23 tokens/s | 45.21 tokens/s | 7.1% |
-| 8K | 18.82 tokens/s | 23.57 tokens/s | 25.3% |
-| 15K | 12.11 tokens/s | 15.31 tokens/s | 26.5% |
-| 23K | 8.21 tokens/s | 10.96 tokens/s | 33.5% |
+| Empty | 51.36 tokens/s | 51.41 tokens/s | 0.1% |
+| 1K | 42.00 tokens/s | 44.90 tokens/s | 6.9% |
+| 8K | 19.05 tokens/s | 25.67 tokens/s | 34.7% |
+| 15K | 12.24 tokens/s | 17.75 tokens/s | 45.0% |
+| 23K | 8.68 tokens/s | 13.22 tokens/s | 52.3% |
 
-Each row measures a 128-token prefill batch after the stated synthetic retained
-context. It is not average throughput for a whole prompt from empty. Context
-capacity is 24,576, microbatch capacity 512, and prefill uses four threads in both
-builds. Speeds use median elapsed times from three runs per build; run order
-alternates baseline/candidate, candidate/baseline, baseline/candidate.
+Each row measures 128 new tokens after the stated deterministic synthetic retained
+context, not average speed for a whole prompt from empty. Context capacity is
+24,576, microbatch capacity 512, and prefill uses four threads. Rates use median
+elapsed times from three runs per build, in alternating baseline/candidate order.
+Only one model process runs at a time. Loading, seeding, warmup, validation and
+four continuation decode steps are excluded from prefill timing.
 
-Each case gets an untimed warmup. Loading, seeding, output checks and four
-following decode steps are outside the timer. Prefill logits, canonical new KV
-bytes and following decode logits matched exactly across both builds and all
-repetitions (202,905,600 reference bytes compared).
+Final prefill logits, canonical new KV bytes and continuation decode logits
+matched exactly across builds and repetitions (202,905,600 reference bytes).
+All timed calls had zero major faults. One baseline process reached 24,112 KiB
+of sampled logical swap during its run; the other five processes had none.
+Three repeats provide a local comparison, not a precise confidence interval.
 
-All 1K-and-longer timed samples had zero major faults. The first empty-context
-baseline sample had 24; its small apparent gain should be treated cautiously
-because baseline speeds ranged from 48.54 to 51.35 t/s. Every recorded frequency
-was 2.4 GHz, with temperatures between 49.6 and 65.0°C. Three repeats establish a
-useful local comparison, not a precise statistical confidence interval.
-
-[Raw results, build hashes and reproduction instructions](results/prefill-total/README.md).
+[Current raw results, build hashes and reproduction instructions](results/prefill-registers-total/README.md).
+The [earlier shared-library comparison](results/prefill-total/README.md) remains
+archived; its candidate predates KV reuse and register-resident value accumulation.
 
 ## Incremental prefill kernel experiments
 
@@ -98,7 +96,7 @@ end-to-end comparison. Each experiment compared 7,833,600 candidate logits and
 165,150,720 new KV bytes exactly, including four following decode steps. This
 checks every new KV byte and final-token prefill logits, not all prefill logits.
 
-Current-build validation measured about 23.47 t/s at 8K/128 and 11.31 t/s at
+Earlier value-kernel validation measured about 23.47 t/s at 8K/128 and 11.31 t/s at
 23,552/512 after value integration. Separate-run measurements have variation;
 the controlled paired experiments are the evidence for the stated gains.
 
@@ -118,11 +116,17 @@ with prompt evaluation averaging 19.32 t/s. Saved-cache restore plus eight
 generated tokens took about 3.01 seconds and reevaluated one prompt token.
 This was not an identical paired comparison against the original server.
 
-After value integration, the HTTP smoke passed again: short saved-cache replay
+After the earlier wider-value-tile integration, the HTTP smoke passed again: short saved-cache replay
 and stream-disconnect recovery matched the equivalent live replay. The 25-minute
 real-prompt HTTP test was not repeated for that final kernel-only change; engine
 24K cache/cancellation checks were repeated. Sanitized timing summaries are in
 `results/qk-integration-http.json` and `results/value-integration-http.json`.
+
+The register-resident value serving candidate subsequently passed the full
+24,500-token HTTP test: 1,148.79 seconds overall, 21.36 prompt tokens/s, and
+2.80 seconds to restore the long prompt and generate eight tokens. This was
+not a controlled A/B comparison. The clean 0.1.1~rc2 package also passed HTTP
+smoke checks. [Validation details](results/value-registers/README.md).
 
 Capacity tests reached about 3.4 GiB process resident high-water memory and
 substantial paging. The host used zram with a microSD-backed writeback device;
@@ -138,7 +142,7 @@ of large RAM savings or context-independent generation speed is made.
   for 512-token near24K batches; retain static scheduling.
 - Microbatch 128: modest memory savings, no compelling general speed advantage.
 
-The latest long-context attention profile was roughly 36% Q×K, 15% mask/softmax
+Before the register-resident value change, the long-context attention profile was roughly 36% Q×K, 15% mask/softmax
 and 49% values. These are summed overlapping worker times, not full-model
 wall-clock percentages. Per-worker traces showed 4–5% average arrival slack near
 24K, but dynamic scheduling did not turn it into a speedup. Waiting time is not

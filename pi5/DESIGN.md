@@ -40,6 +40,9 @@ softmax and output state survives between blocks; score scratch is shared within
 the worker. This preserves arithmetic order and FP16 KV. The path requires four
 workers, D128, 16 query heads, two KV heads and aligned query/key lengths;
 unsupported shapes use the existing implementation. Decode scheduling is unchanged.
+The value stage holds four queries × 32 output dimensions in registers across
+128 keys, reducing partial-output traffic. Its helper stays out of line to avoid
+compiler-generated accumulator spills; FP16 arithmetic order is retained.
 
 The activation quantizer now initializes metadata for zero blocks. This is a
 correctness fix, not a KV quantization change. Runtime repacking still uses the
