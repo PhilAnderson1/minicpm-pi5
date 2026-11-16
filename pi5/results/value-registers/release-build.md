@@ -26,3 +26,12 @@ this validation.
 
 Package: `minicpm-pi5_0.1.1~rc2_arm64.deb` (11,501,120 bytes).
 SHA256: `1a8ced7744c9d42b9c9786812b3f27c93fd12edd2a607d936eca300122a29913`.
+
+## Final 0.1.1 package
+
+The user installed rc2 and reported that the service runs correctly. The final
+0.1.1 package reuses the exact tested executable. Extracted payload contents and
+permissions match rc2 (gzip documentation was compared after decompression).
+Only the package version changes; no inference code was rebuilt.
+
+SHA256: `f83ca465fa6b95cfb743e6f51b33b482d4625e71d7edf496b3840a938687890c`.

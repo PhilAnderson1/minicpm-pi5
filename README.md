@@ -37,7 +37,7 @@ engine. [Methods and raw results](pi5/PERFORMANCE.md).
 1. Download the latest install package from [releases](https://github.com/PhilAnderson1/minicpm-pi5/releases/latest) and install it with:
 
    ```sh
-   sudo apt install ./minicpm-pi5_0.1.0_arm64.deb
+   sudo apt install ./minicpm-pi5_0.1.1_arm64.deb
    ```
 
 2. Download the model:

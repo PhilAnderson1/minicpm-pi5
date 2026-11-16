@@ -14,7 +14,7 @@ or change system services.
 | Build option | Default | Purpose |
 |---|---|---|
 | `JOBS` | `1` | Compiler jobs; use `2` with sufficient free RAM |
-| `VERSION` | `0.1.0` | Debian package version; change for each release |
+| `VERSION` | `0.1.1` | Debian package version; change for each release |
 | `MINICPM_PI5_PACKAGE_BUILD_DIR` | `build-pi5-deb` | Build and output directory |
 | `--configure-only` | — | Configure without compiling |
 
@@ -77,6 +77,10 @@ checksums, permissions, configuration registration, server help/version and dire
 engine tests for exact logits, cache/state restore, shifting, defragmentation and
 cancellation recovery.
 
-Still required before a validated binary release: actual installation lifecycle
-and HTTP tests. The build session could not run HTTP or systemd verification
-because sockets were restricted. No package was installed on the build host.
+For 0.1.1, the clean build passed engine/cache/cancellation checks and independent
+bitwise production-reference comparisons. The isolated serving candidate passed
+full 24K HTTP testing; the clean package passed HTTP smoke testing from the user's
+terminal. The user installed 0.1.1~rc2 and reported that the service runs correctly.
+The final 0.1.1 package retains that exact executable. Install/upgrade/removal/purge
+lifecycle checks use mocked system commands; they are not a complete fresh-OS
+installation matrix. [Validation record](../results/value-registers/release-build.md).
