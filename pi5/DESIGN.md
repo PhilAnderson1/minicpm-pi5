@@ -44,24 +44,46 @@ The value stage holds four queries × 32 output dimensions in registers across
 128 keys, reducing partial-output traffic. Its helper stays out of line to avoid
 compiler-generated accumulator spills; FP16 arithmetic order is retained.
 
+The ARM Q4_K_R4 prefill path prepares four output rows of weights once and
+reuses them across 128 tokens (2048 input dimensions) or 64 tokens (6144 input
+dimensions). A 31,104-byte per-worker buffer holds the largest prepared tile;
+it does not expand the whole model. Supported calls use Q8_K32 activations,
+contiguous rows, and at least 128 tokens in multiples of eight. The fused SiLU
+gate/up path preserves the same arithmetic. Smaller or unsupported calls use
+the existing kernels. Like the arithmetic specializations above, this is
+shape-selected on AArch64 rather than restricted by the profile flag.
+
 The activation quantizer now initializes metadata for zero blocks. This is a
 correctness fix, not a KV quantization change. Runtime repacking still uses the
 model's Q4_K/Q6_K weight representations and their internal repacked equivalents.
+
+For Pi decode with complete 128-key tiles, four query heads retain 32 output
+dimensions each in registers across a key block. This reduces intermediate
+accumulator traffic while preserving FP16 FMA order and running-state rescaling.
+The existing four-worker policy, KV layout and normalization remain unchanged;
+other key tile sizes retain the generic kernel.
+
+The Pi D128 prefill softmax checks each score row's range once. Rows within
+[-80, 0] after subtracting the running maximum use the existing exponential
+polynomial in groups of four vectors, preserving the original summation order.
+Other ranges retain the generic exponential path. This changes neither score
+precision nor KV storage; generic attention and decode are unaffected.
 
 No private experimental global selectors are part of the published engine.
 Mask/softmax fusion and dynamic prefill queues were investigated and rejected.
 The separate commits listed in ENGINE_REVISIONS.txt preserve the profile,
 Q×K and value steps for review and historical comparisons.
 
-## Known numerical issue
+## Prefill/replay normalization consistency
 
-Cold batched prefill and replay of its last token can produce different logits
-and greedy continuation in the original implementation. The same issue reproduced
-with the optimized kernels: 4,177,920 diagnostic old/new logits matched bitwise.
-Live one-token replay matched restored one-token replay exactly. This isolates
-the observed difference from cache serialization and the new Q×K change, but does
-not establish the deeper cause or assert that it is harmless rounding.
+D128 attention now performs final normalization in FP32 on AArch64, matching
+decode. Previously prefill rounded the reciprocal and product to FP16, causing
+cold prefill and last-token replay to differ even with intact cached state.
+KV storage and attention value accumulation remain FP16. Other attention
+translation units retain their existing normalization.
 
-The HTTP test therefore checks equivalent live/replayed paths, retaining exact
-output comparisons rather than comparing two different evaluation paths. A
-separate batch-versus-single-token correctness investigation remains worthwhile.
+The original 361-token reproduction and tested 128/512-token batches at zero
+and 16K prefixes now produce bit-identical cold/replay logits. The 4K HTTP test
+also passed cold/live output equality, saved-cache restore and streaming
+cancellation recovery. This is a consistency fix, not a measured quality or
+throughput improvement. See results/normalization.md for scope and measurements.

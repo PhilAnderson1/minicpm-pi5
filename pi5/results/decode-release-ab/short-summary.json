@@ -1,0 +1,24 @@
+{
+  "summary": [
+    {
+      "phase": 0,
+      "previous": 7.735601933586611,
+      "current": 7.6409373922559665,
+      "change_percent": -1.2237514564914176
+    },
+    {
+      "phase": 1,
+      "previous": 7.7844232182926705,
+      "current": 7.723873691722339,
+      "change_percent": -0.7778293249530055
+    },
+    {
+      "phase": 2,
+      "previous": 7.846098696906869,
+      "current": 7.822604874037036,
+      "change_percent": -0.2994331804555883
+    }
+  ],
+  "major_faults": 0,
+  "validation": "Exact logits across releases, repeated short runs, and common steps of long runs"
+}

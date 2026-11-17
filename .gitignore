@@ -172,3 +172,6 @@ a.out.*
 .env.*
 
 /pi5/debian/__pycache__/
+
+# Locally built Debian installers are published as release assets.
+/packages/*.deb

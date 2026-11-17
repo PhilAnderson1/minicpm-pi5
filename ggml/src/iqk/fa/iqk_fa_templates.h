@@ -1176,11 +1176,21 @@ struct FlashQKV {
             }
         }
         if (S > 0) {
+#if defined(__aarch64__) && defined(IQK_FA_NORMALIZE_F32)
+            // Match decode's FP32 normalization without rounding the reciprocal
+            // or final output to FP16. KV and value accumulators remain FP16.
+            const float norm = 1/S;
+            for (int i = 0; i < D; i += 4) {
+                auto r = vcvt_f32_f16(vld1_f16((const float16_t *)(R + i)));
+                vst1q_f32(qkv + i, vmulq_n_f32(r, norm));
+            }
+#else
             auto norm = F16::set1(1/S);
             for (int i = 0; i < D/F16::block_size; ++i) {
                 auto r = F16::load(R + F16::block_size*i);
                 F16::store(qkv + F16::block_size*i, F16::mul(norm, r));
             }
+#endif
         } else {
             for (int i = 0; i < D/F16::block_size; ++i) {
                 F16::store(qkv + F16::block_size*i, F16::zero());

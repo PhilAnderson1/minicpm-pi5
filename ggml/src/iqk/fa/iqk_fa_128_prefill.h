@@ -4,6 +4,8 @@
 
 // Included after the D128 value specializations. The caller checks the model
 // shape, mask, thread count and complete query/key tile boundaries.
+#include "iqk_fa_128_softmax.h"
+
 #ifdef __aarch64__
 void iqk_pi5_prefill_128(int nq, int nk, int stride_q, int stride_k, int stride_v, int stride_m,
         long head_q, long head_k, long head_v, long head_out,
@@ -36,8 +38,13 @@ void iqk_pi5_prefill_128(int nq, int nk, int stride_q, int stride_k, int stride_
         HelperF16 vh((const char *)v + kv_head*head_v, stride_v);
         for (int key = 0; key < nk; key += K) {
             for (auto & group : groups) {
-                FlashQKfp32<D, Q, K>::multiply_mask_kq(kh, D, stride_m, group.query,
-                        (const char *)mask + group.row*stride_m + key*sizeof(ggml_fp16_t), group.ms);
+                DataInfo info{group.ms.cache, (const char *)group.query, K, D*sizeof(float16_t), 0, 1, nullptr};
+                iqk_gemm_default_floats(D, Q, kh.block, kh.stride, info, K);
+                float32x4_t vk[K/4];
+                const char * row_mask = (const char *)mask + group.row*stride_m + key*sizeof(ggml_fp16_t);
+                for (int j = 0; j < Q; ++j) {
+                    pi5_update_softmax_128(group.ms, j, vk, row_mask + stride_m*j);
+                }
                 pi5_accumulate_values_registers_128(group.values.qkv_cache, vh, group.ms);
             }
             kh.next_block(K);

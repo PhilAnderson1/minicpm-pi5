@@ -2,7 +2,10 @@
 
 #if defined IQK_IMPLEMENT && defined GGML_IQK_FLASH_ATTENTION
 
+// D128 prefill uses the same final normalization precision as decode.
+#define IQK_FA_NORMALIZE_F32
 #include "iqk/fa/iqk_fa_templates.h"
+#undef IQK_FA_NORMALIZE_F32
 #include "iqk/fa/iqk_fa_128_value.h"
 #include "iqk/fa/iqk_fa_128_value_registers.h"
 #include "iqk/iqk_flash_impl.h"

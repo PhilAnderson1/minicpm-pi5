@@ -55,12 +55,37 @@
 // For fp16/fp32 matri multiplications tiling is used to improve
 // performance.
 
+#include "iqk_q4_reuse.h"
 namespace {
 
 struct MulMat {
+    // Small batches keep the original kernel; prepared tiles amortize their writes over prefill.
+    bool reuse_q4 = false;
+    bool reusable(int n, const DataInfo& info, int nx, int end) const {
+#ifdef __aarch64__
+        return reuse_q4 && !func16 && !info.row_mapping && (n == 2048 || n == 6144) && nx % 4 == 0 &&
+               end - info.cur_y >= 128 && (end - info.cur_y) % 8 == 0;
+#else
+        (void)n; (void)info; (void)nx; (void)end;
+        return false;
+#endif
+    }
     std::array<mul_mat_t, IQK_MAX_NY> funcs = {};
     mul_mat_t func16 = nullptr;
     inline void mul_mat_NxM(int n, const void * vx, size_t bx, DataInfo& info, int nrc_x, int nrc_y) {
+#ifdef __aarch64__
+        if (reusable(n, info, nrc_x, nrc_y)) {
+            const int tile = n > 2048 ? 64 : 128;
+            for (int y = info.cur_y; y < nrc_y; y += tile) {
+                auto local = info;
+                local.cur_y = y;
+                iqk_q4_reuse(n, vx, bx, local, nrc_x, std::min(tile, nrc_y - y));
+            }
+            info.cur_y = nrc_y;
+            return;
+        }
+#endif
+
 #ifdef __aarch64__
         constexpr int k_x_step = 64; //8192; // Tiling does not seem to help on my M2 Max (but difference to tiling is small)
 #else
@@ -142,6 +167,31 @@ struct MulMat {
             const float * up_b, const float * gate_b,
             DataInfo& info, int nrc_x, int nrc_y, int unary_op, float limit,
             float situ_beta, float situ_beta_linear) {
+#ifdef __aarch64__
+        if (reusable(n, info, nrc_x, nrc_y) && !up_b && !gate_b && limit <= 1e-6f && unary_op == GGML_UNARY_OP_SILU) {
+            const int tile = n > 2048 ? 64 : 128;
+            alignas(64) float gate[128*4];
+            for (int y = info.cur_y; y < nrc_y; y += tile) {
+                const int count = std::min(tile, nrc_y - y);
+                for (int x = 0; x < nrc_x; x += 4) {
+                    auto local = info;
+                    local.cur_y = y;
+                    local.s += x;
+                    iqk_q4_reuse(n, (const char *)vx_gate + x*bx, bx, local, 4, count);
+                    for (int j = 0; j < count; ++j) {
+                        activate(GGML_UNARY_OP_SILU, 4, local.dst_row(j), gate + 4*j);
+                    }
+                    iqk_q4_reuse(n, (const char *)vx_up + x*bx, bx, local, 4, count);
+                    for (int j = 0; j < count; ++j) {
+                        for (int k = 0; k < 4; ++k) local.dst_row(j)[k] *= gate[4*j + k];
+                    }
+                }
+            }
+            info.cur_y = nrc_y;
+            return;
+        }
+#endif
+
 #ifdef __aarch64__
         constexpr int k_x_step = 64; //8192; // Tiling does not seem to help on my M2 Max (but difference to tiling is small)
 #else
@@ -1147,6 +1197,7 @@ bool MulMat::prepare(int typeA, int typeB, int ne00, MulMat& mm, int Ny) {
 namespace {
 
 bool MulMat::prepare(int typeA, int typeB, int ne00, MulMat& m, int /*Ny*/) {
+    m.reuse_q4 = typeA == GGML_TYPE_Q4_K_R4 && typeB == GGML_TYPE_Q8_K32;
 
     switch (typeA) {
         case GGML_TYPE_F16:

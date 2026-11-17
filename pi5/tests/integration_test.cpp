@@ -68,6 +68,8 @@ int main(int argc,char**argv){
  }
  auto a=context(m,false,512),b=context(m,true,24576);
  for(int p=0;p<256;p+=64){check(!eval(a,p,64)&&!eval(b,p,64),"real prefill");same(logits(a,v),logits(b,v),"prefill");}
+ auto cold=logits(b,v);
+ for(auto c:{a,b}){check(llama_kv_cache_seq_rm(c,0,255,-1),"truncate last prefill token");check(!eval(c,255),"replay last prefill token");same(cold,logits(c,v),"cold prefill versus replay");}
  auto s=save(a);check(s==save(b),"canonical cache bytes");restore(b,s);
  {
   std::vector<uint8_t> full(llama_state_get_size(b));

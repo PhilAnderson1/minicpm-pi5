@@ -180,8 +180,10 @@ if (GGML_IQK_MUL_MAT)
     message(STATUS "Using optimized iqk matrix multiplications")
     add_compile_definitions(GGML_USE_IQK_MULMAT)
     set(GGML_SOURCES_IQK_MM iqk/iqk_mul_mat.cpp
+                            iqk/iqk_q4_reuse.cpp
                             iqk/iqk_kda.cpp
                             iqk/iqk_flash_attn.cpp
+                            iqk/fa/iqk_fa_128_decode.cpp
                             iqk/fa/iqk_fa_576_512.cpp
                             iqk/fa/iqk_fa_512_512.cpp
                             iqk/fa/iqk_fa_320_256.cpp

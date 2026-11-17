@@ -22,4 +22,8 @@ to historical private builds; there are no such global switches in this engine.
 
 - `value-registers/`: incremental register-resident value kernel measurements and serving validation.
 
-- `prefill-registers-total/`: refreshed direct baseline versus 0.1.1~rc2 prefill comparison used in the README.
+- `prefill-registers-total/`: refreshed direct baseline versus 0.1.1~rc2 prefill comparison previously used in the README.
+
+- `rc4-throughput/`: current README decode and prefill comparison against the preserved baseline.
+
+- `decode-release-ab/`: matched v0.1.1/rc4 decode comparison at 16 and 64 steps, including a focused 1K follow-up.

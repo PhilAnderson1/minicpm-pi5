@@ -1,79 +1,56 @@
 # Measurements and limitations
 
-Measurements were made on a 4 GB Raspberry Pi 5 with Cortex-A76 cores sampled at
-2.4 GHz, CPU inference, MiniCPM5-2B-Q4_K_M, runtime weight repacking, FP16 KV,
-24,576-token capacity, `-t 2 -tb 4`, and OpenMP `close`/`cores`/`PASSIVE`.
-Decode measurements date from 2026-11-13/14; the direct prefill comparison was
-refreshed on 2026-11-16 with the 0.1.1~rc2 engine. This is a single-machine experiment,
-not a multi-device study. Small differences, cold faults and memory pressure
-matter; the number of repetitions is deliberately reported.
+The current README tables were measured on 2026-11-17 with **0.1.2~rc4** on a
+4 GB Raspberry Pi 5, MiniCPM5-2B-Q4_K_M, FP16 KV and runtime repacking. They compare
+the preserved ik_llama.cpp baseline (2a0832d7 plus the zero-activation metadata
+fix, shared libraries) with the mostly static rc4 release engine. Build/linkage
+differences are included. These are single-machine synthetic-context measurements.
 
 ## Decode
 
-| Retained prefix | Baseline tokens/s | Pi profile tokens/s | Reported gain |
-|---:|---:|---:|---:|
-| 1,024 | 7.9542 | 8.1456 | 2.41% |
-| 8,192 | 5.0647 | 6.0483 | 19.42% |
-| 15,360 | 3.7725 | 4.9959 | 32.43% |
-| 23,552 | 2.9345 | 3.7412 | 27.49% |
+| Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
+|---|---:|---:|---:|
+| 1K | 7.48 tokens/s | 7.51 tokens/s | 0.5% |
+| 8K | 5.01 tokens/s | 5.81 tokens/s | 15.9% |
+| 15K | 3.72 tokens/s | 4.77 tokens/s | 28.1% |
+| 23K | 2.89 tokens/s | 3.96 tokens/s | 36.8% |
 
-The 1K–15K user-run checks used synthetic retained KV, three alternating repetitions,
-16 generated tokens each, and exact-logit comparisons. The baseline is the
-unoptimized research path with the zero-activation metadata fix, not the older
-installed `/opt` build. `results/reported-decode.csv` transcribes the terminal
-summaries; raw per-repetition data is not claimed for that file.
+Each sample generates 64 fixed-input tokens after a deterministic synthetic KV
+prefix. Three pairs alternate execution order; rates are total tokens divided
+by total timed decode duration. Older headline samples used 16 tokens, so rate
+changes since those tables should not be attributed solely to new optimizations.
 
-The 23K row was measured on 2026-11-14 against the preserved baseline and final
-engine libraries used for the direct prefill comparison. Separate processes keep
-only one model/context resident at a time. It retains the earlier decode settings:
-512 tokens of capacity beyond the retained prefix, 64-token batch/microbatch
-capacity, FP16 KV, repacking, two decode threads and four batch threads.
-
-Each process seeds identical synthetic KV, warms one decode step, removes that
-step, then times 16 decode steps. Logit capture/comparison is outside the timer.
-Three pairs run in alternating order; throughput is 48 tokens divided by summed
-decode time, matching the earlier decode aggregation. All 16 logit vectors match
-exactly across builds and repetitions (41,779,200 bytes compared). All samples
-had zero major faults and recorded 2.4 GHz. Candidate samples ranged from 3.63 to
-3.80 t/s, so the aggregate should not be treated as an exact performance guarantee.
-
-[23K raw timings, build hashes and method](results/decode-23k/README.md).
-
-The included `decode_check` runs both profile settings in the current library.
-Both now share the deployed arithmetic fixes and prefill kernels. It does not
-recreate every historical binary, and it is not a long sustained-generation test.
-
-## Direct prefill comparison
-
-The current `0.1.1~rc2` package engine was compared with the preserved upstream
-baseline: commit `2a0832d7` plus the zero-activation correctness fix. The baseline
-uses shared libraries and the candidate uses the clean package's static engine
-libraries. This measures the two builds, including linking differences.
+## Prefill
 
 | Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
 |---|---:|---:|---:|
-| Empty | 51.36 tokens/s | 51.41 tokens/s | 0.1% |
-| 1K | 42.00 tokens/s | 44.90 tokens/s | 6.9% |
-| 8K | 19.05 tokens/s | 25.67 tokens/s | 34.7% |
-| 15K | 12.24 tokens/s | 17.75 tokens/s | 45.0% |
-| 23K | 8.68 tokens/s | 13.22 tokens/s | 52.3% |
+| 1K | 42.88 tokens/s | 47.65 tokens/s | 11.1% |
+| 8K | 18.92 tokens/s | 26.69 tokens/s | 41.1% |
+| 15K | 12.22 tokens/s | 18.42 tokens/s | 50.7% |
+| 23K | 8.68 tokens/s | 13.68 tokens/s | 57.5% |
 
-Each row measures 128 new tokens after the stated deterministic synthetic retained
-context, not average speed for a whole prompt from empty. Context capacity is
-24,576, microbatch capacity 512, and prefill uses four threads. Rates use median
-elapsed times from three runs per build, in alternating baseline/candidate order.
-Only one model process runs at a time. Loading, seeding, warmup, validation and
-four continuation decode steps are excluded from prefill timing.
+Each sample processes 128 new tokens after the retained prefix, with 24K context
+capacity, microbatch 512 and four prefill threads. Rates use median elapsed time
+from three alternating pairs. This is not whole-prompt throughput from empty.
 
-Final prefill logits, canonical new KV bytes and continuation decode logits
-matched exactly across builds and repetitions (202,905,600 reference bytes).
-All timed calls had zero major faults. One baseline process reached 24,112 KiB
-of sampled logical swap during its run; the other five processes had none.
-Three repeats provide a local comparison, not a precise confidence interval.
+All timed samples had zero major faults and monitoring recorded zero process
+swap. Decode logits match exactly across builds and repetitions. Prefill logits
+repeat exactly within each build; cross-build equality is intentionally changed
+by rc4's FP32 final normalization fix.
 
-[Current raw results, build hashes and reproduction instructions](results/prefill-registers-total/README.md).
-The [earlier shared-library comparison](results/prefill-total/README.md) remains
-archived; its candidate predates KV reuse and register-resident value accumulation.
+[Raw timings, hashes, settings and reproduction](results/rc4-throughput/README.md).
+Earlier [prefill](results/prefill-registers-total/README.md) and
+[23K decode](results/decode-23k/README.md) measurements remain archived.
+The historical incremental and serving measurements below used earlier builds;
+their percentages must not be added to the current direct-comparison gains.
+
+## Release-to-release decode check
+
+A separate matched v0.1.1 versus rc4 comparison found 1.7–2.6% gains in the
+64-token samples. Short 1K results were variable; a focused recheck did not
+reproduce the initial 5.5% slowdown, though a small penalty is not ruled out.
+This does not establish why older historical headline rates differ.
+[Full results and follow-up](results/decode-release-ab/README.md).
 
 ## Incremental prefill kernel experiments
 

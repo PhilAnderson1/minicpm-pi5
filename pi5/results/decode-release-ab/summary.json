@@ -1,0 +1,104 @@
+{
+  "summary": [
+    {
+      "prefix_tokens": 1024,
+      "tokens": 16,
+      "previous": 7.756262402668563,
+      "current": 7.326956575055217,
+      "change_percent": -5.534957500479132,
+      "paired_changes": [
+        -6.619331746328561,
+        0.7183811107165594,
+        -10.109591228725245
+      ]
+    },
+    {
+      "prefix_tokens": 1024,
+      "tokens": 64,
+      "previous": 7.541166592140564,
+      "current": 7.6706470582320225,
+      "change_percent": 1.7169819086930715,
+      "paired_changes": [
+        2.466863549781917,
+        -0.9179800200228683,
+        3.676641537348724
+      ]
+    },
+    {
+      "prefix_tokens": 8192,
+      "tokens": 16,
+      "previous": 5.666729401296367,
+      "current": 5.660285033100801,
+      "change_percent": -0.11372288562236932,
+      "paired_changes": [
+        -0.6879419813631049,
+        -1.920092040317345,
+        2.354923060966163
+      ]
+    },
+    {
+      "prefix_tokens": 8192,
+      "tokens": 64,
+      "previous": 5.707200145472251,
+      "current": 5.83212999612762,
+      "change_percent": 2.1889866742185404,
+      "paired_changes": [
+        0.7741520991699113,
+        2.9207393640178214,
+        2.8867216622624703
+      ]
+    },
+    {
+      "prefix_tokens": 15360,
+      "tokens": 16,
+      "previous": 4.647273662542889,
+      "current": 4.64116193760183,
+      "change_percent": -0.13151205168568936,
+      "paired_changes": [
+        2.6412777578862956,
+        -2.479117419801402,
+        -0.385175149259398
+      ]
+    },
+    {
+      "prefix_tokens": 15360,
+      "tokens": 64,
+      "previous": 4.676826742398683,
+      "current": 4.7609767797525935,
+      "change_percent": 1.799297728757665,
+      "paired_changes": [
+        3.58592200336747,
+        -0.6291501703174385,
+        2.5336098518389027
+      ]
+    },
+    {
+      "prefix_tokens": 23552,
+      "tokens": 16,
+      "previous": 3.8415880335100026,
+      "current": 3.934946242975376,
+      "change_percent": 2.4301983620058643,
+      "paired_changes": [
+        1.85261344377321,
+        2.002381301595002,
+        3.43925701083736
+      ]
+    },
+    {
+      "prefix_tokens": 23552,
+      "tokens": 64,
+      "previous": 3.848380744281001,
+      "current": 3.9500353281716696,
+      "change_percent": 2.6414897757124356,
+      "paired_changes": [
+        3.350551622400877,
+        1.8811468501816808,
+        2.7047601280633327
+      ]
+    }
+  ],
+  "major_faults": 0,
+  "max_swap_kib": 0,
+  "max_rss_kib": 2645152,
+  "validation": "All logits bit-exact across releases and repetitions; first 16 steps of each 64-token sample match its 16-token counterpart"
+}

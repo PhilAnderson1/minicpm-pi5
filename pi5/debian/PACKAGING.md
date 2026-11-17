@@ -14,7 +14,7 @@ or change system services.
 | Build option | Default | Purpose |
 |---|---|---|
 | `JOBS` | `1` | Compiler jobs; use `2` with sufficient free RAM |
-| `VERSION` | `0.1.1` | Debian package version; change for each release |
+| `VERSION` | `0.1.2` | Debian package version; change for each release |
 | `MINICPM_PI5_PACKAGE_BUILD_DIR` | `build-pi5-deb` | Build and output directory |
 | `--configure-only` | — | Configure without compiling |
 
@@ -84,3 +84,8 @@ terminal. The user installed 0.1.1~rc2 and reported that the service runs correc
 The final 0.1.1 package retains that exact executable. Install/upgrade/removal/purge
 lifecycle checks use mocked system commands; they are not a complete fresh-OS
 installation matrix. [Validation record](../results/value-registers/release-build.md).
+
+For 0.1.2, the final package retains the validated rc4 executable. The rc4
+engine passed cold/replay, cache and cancellation checks, prototype output
+parity, and fresh decode/prefill benchmarks. The private normalization serving
+build passed the user-run 4K HTTP check. See results under `pi5/results/`.

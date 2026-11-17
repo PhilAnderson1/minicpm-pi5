@@ -7,6 +7,7 @@
 #include "iqk_config.h"
 #include "iqk_mul_mat.h"
 #include "iqk_flash_impl.h"
+#include "fa/iqk_fa_128_decode.h"
 #include "ggml.h"
 
 #if defined IQK_IMPLEMENT && defined GGML_IQK_FLASH_ATTENTION
@@ -146,7 +147,7 @@ bool iqk_fa_indexed_kv_heads_rows(int int_type_k, int int_type_v, int Dk, int Dv
 }
 }
 
-// Four independent groups of four query heads reuse the stock FP16 kernel.
+// Four independent groups of four query heads share F16 keys and values.
 static bool pi5_attention(int nk,long nbq,long nbk,long nbv,long nbo,int sk,int sv,
         const float *q,const char *k,const char *v,const ggml_fp16_t *mask,float scale,
         float *out,void *work,barrier_t barrier,void *barrier_data,int ith,int nth) {
@@ -154,11 +155,21 @@ static bool pi5_attention(int nk,long nbq,long nbk,long nbv,long nbo,int sk,int 
     for (int task = ith; task < 4; task += nth) {
         const int first = task * group, kh = first / 8;
         float *part = (float *)work + task * part_size;
-        bool ok = iqk_flash_attn_impl(GGML_TYPE_F16, GGML_TYPE_F16, 128, 128, group, nk,
-                nbq, sk, sv, 0, 128, (const float *)((const char *)q + first * nbq),
-                k + kh * nbk, v + kh * nbv, mask, nullptr, 0, scale, 0,
-                part, part + 128 * group, part + 129 * group);
-        GGML_ASSERT(ok);
+#ifdef __aarch64__
+        if (nk > 0 && nk%128 == 0) {
+            iqk_pi5_decode_128(nk, nbq, sk, sv,
+                    (const float *)((const char *)q + first * nbq),
+                    k + kh * nbk, v + kh * nbv, mask, scale,
+                    part, part + 128 * group, part + 129 * group);
+        } else
+#endif
+        {
+            bool ok = iqk_flash_attn_impl(GGML_TYPE_F16, GGML_TYPE_F16, 128, 128, group, nk,
+                    nbq, sk, sv, 0, 128, (const float *)((const char *)q + first * nbq),
+                    k + kh * nbk, v + kh * nbv, mask, nullptr, 0, scale, 0,
+                    part, part + 128 * group, part + 129 * group);
+            GGML_ASSERT(ok);
+        }
     }
     barrier(barrier_data);
     for (int head = ith; head < 16; head += nth) {

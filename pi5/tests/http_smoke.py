@@ -6,9 +6,11 @@ repo=Path(__file__).resolve().parents[2]
 parser=argparse.ArgumentParser(description='Start a temporary Pi-profile server and test cache replay/cancellation. Stop other model processes first.')
 parser.add_argument('--model',type=Path,required=True)
 parser.add_argument('--port',type=int,default=8081)
+parser.add_argument('--prompt-tokens',type=int,default=1024,help='main replay/cancellation prompt length; use 4096 to exercise four-worker decode')
 parser.add_argument('--full',action='store_true',help='also run the real 24,500-token prompt; allow 20–30 minutes')
 parser.add_argument('--output',type=Path,default=repo/'build-pi5-tests/http')
 args=parser.parse_args()
+if not 1024<=args.prompt_tokens<=16384:parser.error('--prompt-tokens must be between 1024 and 16384')
 if not args.model.is_file():parser.error('model file does not exist')
 if not 1<=args.port<=65535:parser.error('invalid port')
 root=args.output.resolve();root.mkdir(parents=True,exist_ok=True)
@@ -27,7 +29,7 @@ with socket.socket() as probe:
         probe.listen(1)
     except OSError as exc:
         raise SystemExit(f'Cannot reserve test port {port}: {exc}. Check: ss -ltnp sport = :{port}') from exc
-result={'before':mem(),'requests':[]};done=threading.Event()
+result={'before':mem(),'requests':[],'prompt_tokens':args.prompt_tokens};done=threading.Event()
 build=Path(os.environ.get('MINICPM_PI5_BUILD_DIR',repo/'build-pi5'))
 result['artifacts']={str(p.resolve()):hashlib.sha256(p.read_bytes()).hexdigest()
     for p in (build/'bin/llama-server',build/'src/libllama.so',build/'ggml/src/libggml.so') if p.is_file()}
@@ -67,16 +69,16 @@ try:
     assert chat.get('choices'),chat;result['chat']=chat
     # More than one microbatch ensures the new complete-tile prefill path is
     # exercised even if a short BOS/common prefix is reused from the chat.
-    a=request('/tokenize',{'content':'A quiet garden has roses and a pond. '*160,'add_special':True})['tokens'][:1024]
-    assert len(a)==1024,'test prompt is too short'
+    a=request('/tokenize',{'content':'A quiet garden has roses and a pond. '*(args.prompt_tokens//6+160),'add_special':True})['tokens'][:args.prompt_tokens]
+    assert len(a)==args.prompt_tokens,'test prompt is too short'
     b='A busy railway station has trains and passengers. '*40
     cold=completion('prompt A',a)
     assert cold['timings']['prompt_n']>=512,'cold test did not exercise a full prefill microbatch'
-    # Compare equivalent one-token replay paths: batched prefill can differ
-    # from single-token replay even with the original library (cache-diagnosis/).
+    # D128 final normalization now matches decode precision.
     first=completion('live replay prompt A',a)
     assert first['timings']['prompt_n'] <= 1,'live prompt was not reused'
     result['cold_vs_live_short_equal']=cold['content']==first['content']
+    assert cold['content']==first['content'],'cold prefill differs from live replay'
     completion('prompt B',b);again=completion('restore prompt A',a)
     assert first['content']==again['content'],'short restored output differs from live replay'
     assert again['timings']['prompt_n'] <= 1,'short prompt was not restored'

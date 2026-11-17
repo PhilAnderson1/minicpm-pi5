@@ -27,19 +27,28 @@ export OMP_PROC_BIND=close OMP_PLACES=cores OMP_WAIT_POLICY=PASSIVE
   after warmup with repeat-logit consistency. Prefix 0 measures a real empty-cache
   prefill; other prefixes seed deterministic synthetic KV. Timing excludes seeding
   and checks. No natural-language throughput claim follows from synthetic prefixes.
+- `decode_registers_check`: 96 bitwise comparisons against generic four-head
+  attention, covering strided inputs, masks and multiple key lengths.
+- `softmax_check`: 512 bitwise state comparisons against generic softmax,
+  covering masked rows, running-maximum rescaling, softcaps and extreme scores.
+  Requires an AArch64 build; does not load a model.
+- `q4_reuse_check MODEL`: 140 exact-output comparisons of prepared Q4 dispatch
+  against the original eight-token kernel, including full batches, short fallbacks,
+  tail groups and zero/tiny/large/constant/random activations. Requires the tested
+  MiniCPM model tensors; no timing claim is made.
 - `python3 pi5/tests/http_smoke.py --model MODEL`: starts a temporary loopback
   server on 8081 with the 24K/1GiB preset, checks chat/completion, live versus saved
-  replay, and recovery after closing a streaming request. The server is stopped
+  replay, cold-versus-live output equality, and recovery after closing a streaming request. The server is stopped
   on completion. `--port` changes its port; `--output` changes the results folder.
-  Default results are in ignored `build-pi5-tests/http/`. `--full` additionally
+  `--prompt-tokens 4096` exercises the four-worker decode path during replay
+  and cancellation. Default results are in ignored `build-pi5-tests/http/`. `--full` additionally
   prefills and restores a real 24,500-token prompt. Allow 20–30 minutes.
 
-The HTTP runner explicitly suppresses EOS for its completion probes so they
-perform actual decoding. It compares saved restore with a live one-token replay
-reference; cold batched prefill is not an equivalent numerical baseline. This
-behavior is explained in DESIGN.md. The test uses a single slot and deterministic
-sampling. Request counts, timings and output assertions are distinct from a
-sustained generation benchmark.
+The HTTP runner checks cold prefill against live one-token replay, and saved
+restore against that live reference. The D128 FP32 normalization change removes
+the previously observed cold/replay discrepancy in tested cases. The test uses
+a single slot and deterministic sampling. Request counts, timings and output
+assertions are distinct from a sustained generation benchmark.
 
 Existing deployment evidence covers the engine source copied into this fork.
 Publication packaging validation is recorded in PUBLICATION_CHECKS.md. Lightweight

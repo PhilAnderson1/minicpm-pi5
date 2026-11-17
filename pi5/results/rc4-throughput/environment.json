@@ -1,0 +1,43 @@
+{
+  "baseline": "ik_llama.cpp 2a0832d7 plus zero-activation metadata fix",
+  "candidate": "0.1.2~rc4",
+  "baseline_linkage": "shared",
+  "candidate_linkage": "mostly static",
+  "hashes": {
+    "baseline/libllama.so": "62f0db9cdd371d93b8a1098b882d3a78c7a026136a8d5cd00720c5a79485d2f3",
+    "baseline/libggml.so": "c23ed33ea0bfc0e730fff8ea92dd6a805d9a438f9e35c95e2616b1c05dba8751",
+    "compare.cpp": "c0e8a0a62065af9b4d2ae5e9f452d4baa7e6c9c17b2b4361b87587049034b5c8",
+    "baseline": "cf6eead33a6b984b22fca5abab58669d54c6ac447e38351f80c74fb34ce93263",
+    "candidate": "a230713e31cc197fb2de90cfc8314643b92f457dd5d9c7526ef53ca15f2bc0f3",
+    "candidate/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+    "candidate/ggml/src/libggml.a": "cea630e5925fface991f6194b591662f7e844b47319860d97133f5240b756dd5",
+    "minicpm-pi5_0.1.2~rc4_arm64.deb": "a5ab967eafdb961d44978905d30a5d62bf9c6691ff9622ed2b3ac67eb95df3b3"
+  },
+  "model_sha256": "ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd",
+  "date_utc": "2026-11-17T10:37:29Z",
+  "prefixes": [
+    1024,
+    8192,
+    15360,
+    23552
+  ],
+  "decode_steps": 64,
+  "prefill_batch": 128,
+  "repetitions": 3,
+  "threads": 2,
+  "prefill_threads": 4,
+  "decode_capacity": "prefix + 512",
+  "prefill_capacity": 24576,
+  "decode_microbatch": 64,
+  "prefill_microbatch": 512,
+  "kv": "F16",
+  "prefix_type": "deterministic synthetic KV",
+  "openmp": {
+    "OMP_PROC_BIND": "close",
+    "OMP_PLACES": "cores",
+    "OMP_WAIT_POLICY": "PASSIVE"
+  },
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "public_harness_sha256": "ce122b4607aac3c84f671d971d5aa23d7003714b3fc9d61feea2a2bb4134d0b0",
+  "harness_note": "Public harness differs from measured private copy only in its include path and introductory comments."
+}

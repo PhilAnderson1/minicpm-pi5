@@ -18,4 +18,4 @@ cmake -S "$repo" -B "$build" -DCMAKE_BUILD_TYPE=Release \
     -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_SERVER=ON -DLLAMA_BUILD_EXAMPLES=ON -DLLAMA_CURL=OFF
 [ "${1:-}" != --configure-only ] || exit 0
 cmake --build "$build" --target llama-server -j "${JOBS:-1}"
-python3 "$repo/pi5/debian/package.py" "$build/bin/llama-server" "${VERSION:-0.1.1}" "$build/packages"
+python3 "$repo/pi5/debian/package.py" "$build/bin/llama-server" "${VERSION:-0.1.2}" "$build/packages"
