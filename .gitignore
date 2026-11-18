@@ -175,3 +175,4 @@ a.out.*
 
 # Locally built Debian installers are published as release assets.
 /packages/*.deb
+/packages/*.deb.sha256

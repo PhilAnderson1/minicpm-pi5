@@ -99,5 +99,9 @@ Description: MiniCPM inference optimized for Raspberry Pi 5
     (root/'DEBIAN/md5sums').chmod(0o644)
     output = a.output.resolve()/f'minicpm-pi5_{a.version}_arm64.deb'
     subprocess.run(['dpkg-deb', '--root-owner-group', '--build', str(root), str(output)], check=True)
+    checksum = output.with_name(output.name + '.sha256')
+    digest = hashlib.sha256(output.read_bytes()).hexdigest()
+    checksum.write_text(f'{digest}  {output.name}\n')
     print('Dynamic libraries:', ', '.join(needed))
     print('Package:', output)
+    print('Checksum:', checksum)
