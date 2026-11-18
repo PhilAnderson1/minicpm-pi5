@@ -62,14 +62,29 @@ static inline float pi5_load_scores_with_min(FlashMS<64, 128, true> & ms, int j,
 // Preserve the original polynomial and summation order. The row-wide range
 // check replaces 32 individual vector range checks. -80 <= x <= 0 stays
 // conservatively inside v_expf's ordinary branch (abs(n) <= 126).
-static inline void pi5_update_softmax_128(FlashMS<64, 128, true> & ms, int j,
-        float32x4_t * vk, const char * mask) {
+template<bool HalfWeights>
+static inline void pi5_update_softmax_impl_128(FlashMS<64, 128, true> & ms, int j,
+        float32x4_t * vk, const char * mask, float16_t * weights) {
     float minimum;
     const float maximum = pi5_load_scores_with_min(ms, j, vk, mask, minimum);
     ms.update_M(j, maximum);
-    if (!(ms.M[j] > -INFINITY)) return;
+    if (!(ms.M[j] > -INFINITY)) {
+        if constexpr (HalfWeights) std::memset(weights, 0, 128*sizeof(float16_t));
+        return;
+    }
     if (!(minimum - ms.M[j] >= -80.f && maximum <= ms.M[j])) {
-        ms.update_S(j, vk);
+        if constexpr (HalfWeights) {
+            auto m = vdupq_n_f32(ms.M[j]);
+            auto sum = vdupq_n_f32(0);
+            for (int l = 0; l < 32; ++l) {
+                auto value = v_expf(vsubq_f32(vk[l], m));
+                sum = vaddq_f32(sum, value);
+                vst1_f16(weights + 4*l, vcvt_f16_f32(value));
+            }
+            ms.S[j] += vaddvq_f32(sum);
+        } else {
+            ms.update_S(j, vk);
+        }
         return;
     }
     auto m = vdupq_n_f32(ms.M[j]);
@@ -80,9 +95,20 @@ static inline void pi5_update_softmax_128(FlashMS<64, 128, true> & ms, int j,
         for (int u = 0; u < 4; ++u) {
             vk[l + u] = values[u];
             sum = vaddq_f32(sum, values[u]);
-            vst1q_f32(ms.cache + 128*j + 4*(l + u), values[u]);
+            // Sum in FP32 before rounding the value kernel's input. Avoid
+            // writing intermediate FP32 weights in the fused path.
+            if constexpr (HalfWeights) vst1_f16(weights + 4*(l + u), vcvt_f16_f32(values[u]));
+            else vst1q_f32(ms.cache + 128*j + 4*(l + u), values[u]);
         }
     }
     ms.S[j] += vaddvq_f32(sum);
+}
+static inline void pi5_update_softmax_128(FlashMS<64, 128, true> & ms, int j,
+        float32x4_t * vk, const char * mask) {
+    pi5_update_softmax_impl_128<false>(ms, j, vk, mask, nullptr);
+}
+static inline void pi5_update_softmax_weights_128(FlashMS<64, 128, true> & ms, int j,
+        float32x4_t * vk, const char * mask, float16_t * weights) {
+    pi5_update_softmax_impl_128<true>(ms, j, vk, mask, weights);
 }
 #endif

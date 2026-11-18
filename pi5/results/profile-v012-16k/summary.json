@@ -1,0 +1,338 @@
+{
+  "long128": {
+    "matrix_roles_percent": {
+      "Kcur+Qcur": 1.5363171117457135,
+      "Vcur": 0.2611496617004653,
+      "result_output": 0.2819946635038776,
+      "Kcur+Qcur+Vcur": 1.6145351914642914,
+      "ffn_down": 8.272287405758885,
+      "attn_out": 2.6172021643999503,
+      "kqv_out": 0.059893594080729265,
+      "ffn_up_gate": 16.386450225157805
+    },
+    "release_tokens_s": 17.704845558291836,
+    "release_ms": [
+      7228.22145,
+      7229.659224,
+      7372.059974
+    ],
+    "profile_on_ms": [
+      7281.547755,
+      7316.076507
+    ],
+    "profile_off_ms": [
+      7203.176981,
+      7279.674074
+    ],
+    "tracing_elapsed_change_percent": 0.792476609502768,
+    "profiler_off_vs_release_percent": 0.16275045801521504,
+    "categories_percent": {
+      "matrix": 31.029830017811708,
+      "attention": 67.85572181756234,
+      "other": 0.9296497384407565
+    },
+    "matrix_types_percent": {
+      "q4_k_r4": 26.120724705134048,
+      "q6_k_r4": 4.909105312677659
+    },
+    "logical_weight_gb_s": 0.6211550267758272,
+    "completion_tail_percent": 0.003938387212465919,
+    "reps": [
+      {
+        "total_ms": 7281.547755,
+        "categories_percent": {
+          "other": 0.8942466930233026,
+          "matrix": 29.981414301663115,
+          "attention": 68.936882224705
+        },
+        "matrix_types_percent": {
+          "q4_k_r4": 25.154130160614454,
+          "q6_k_r4": 4.827284141048665
+        },
+        "matrix_roles_percent": {
+          "Kcur+Qcur": 1.4951903587426245,
+          "Vcur": 0.28908689070322524,
+          "attn_out": 2.447309363282477,
+          "ffn_up_gate": 15.65787986787708,
+          "ffn_down": 8.122943361785312,
+          "Kcur+Qcur+Vcur": 1.637069535362815,
+          "kqv_out": 0.060014713176869086,
+          "result_output": 0.27192021073272493
+        },
+        "logical_weight_gb_s": 0.6436096744508183,
+        "completion_tail_percent": 0.0036805361856752693,
+        "active_worker_internal_wait_ms": {
+          "other": 0.0,
+          "matrix": 29.550999999999995,
+          "attention": 0.0
+        },
+        "active_worker_finish_spread_ms": {
+          "other": 9.177999999999985,
+          "matrix": 111.45300000000006,
+          "attention": 408.072
+        }
+      },
+      {
+        "total_ms": 7316.076507,
+        "categories_percent": {
+          "other": 0.9650527838582104,
+          "matrix": 32.0782457339603,
+          "attention": 66.77456141041966
+        },
+        "matrix_types_percent": {
+          "q4_k_r4": 27.087319249653643,
+          "q6_k_r4": 4.990926484306653
+        },
+        "matrix_roles_percent": {
+          "Kcur+Qcur": 1.5774438647488027,
+          "Vcur": 0.23321243269770525,
+          "attn_out": 2.787094965517424,
+          "ffn_up_gate": 17.115020582438532,
+          "ffn_down": 8.421631449732457,
+          "Kcur+Qcur+Vcur": 1.5920008475657677,
+          "kqv_out": 0.059772474984589444,
+          "result_output": 0.2920691162750302
+        },
+        "logical_weight_gb_s": 0.5987003791008362,
+        "completion_tail_percent": 0.004196238239256568,
+        "active_worker_internal_wait_ms": {
+          "other": 0.0,
+          "matrix": 25.485,
+          "attention": 0.0
+        },
+        "active_worker_finish_spread_ms": {
+          "other": 13.062999999999995,
+          "matrix": 210.8460000000001,
+          "attention": 286.33400000000006
+        }
+      }
+    ]
+  },
+  "long512": {
+    "matrix_roles_percent": {
+      "Kcur+Qcur": 1.5850485071382354,
+      "Vcur": 0.23958853598022878,
+      "result_output": 0.06886956629917085,
+      "Kcur+Qcur+Vcur": 1.6369356011133163,
+      "ffn_down": 8.457474980834796,
+      "attn_out": 2.6048365966457623,
+      "kqv_out": 0.06574319129722342,
+      "ffn_up_gate": 15.277208519651522
+    },
+    "release_tokens_s": 17.38035109470979,
+    "release_ms": [
+      29503.301964,
+      29400.268018,
+      29458.553352
+    ],
+    "profile_on_ms": [
+      29452.277189,
+      29546.083182
+    ],
+    "profile_off_ms": [
+      29425.515409,
+      29431.091595
+    ],
+    "tracing_elapsed_change_percent": 0.24084529199985827,
+    "profiler_off_vs_release_percent": -0.10268613546137173,
+    "categories_percent": {
+      "matrix": 29.935705498960257,
+      "attention": 68.37200066775878,
+      "other": 1.5015007313240738
+    },
+    "matrix_types_percent": {
+      "q4_k_r4": 25.151398263503722,
+      "q6_k_r4": 4.784307235456524
+    },
+    "logical_weight_gb_s": 0.15911445555397002,
+    "completion_tail_percent": 0.00676080486404342,
+    "reps": [
+      {
+        "total_ms": 29452.277189,
+        "categories_percent": {
+          "other": 1.5108950562444075,
+          "matrix": 29.81674708426227,
+          "attention": 68.48110545263005
+        },
+        "matrix_types_percent": {
+          "q4_k_r4": 25.026231257774807,
+          "q6_k_r4": 4.790515826487456
+        },
+        "matrix_roles_percent": {
+          "Kcur+Qcur": 1.5420131933622487,
+          "Vcur": 0.23778466958798122,
+          "attn_out": 2.596182954184542,
+          "ffn_up_gate": 15.292705453968075,
+          "ffn_down": 8.391986073399849,
+          "Kcur+Qcur+Vcur": 1.6232530915421302,
+          "kqv_out": 0.06617484914639887,
+          "result_output": 0.06664679907104483
+        },
+        "logical_weight_gb_s": 0.15999972670473897,
+        "completion_tail_percent": 0.010773360510083266,
+        "active_worker_internal_wait_ms": {
+          "other": 0.0,
+          "matrix": 83.86600000000001,
+          "attention": 0.0
+        },
+        "active_worker_finish_spread_ms": {
+          "other": 69.79700000000008,
+          "matrix": 506.83399999999966,
+          "attention": 1341.5070000000003
+        }
+      },
+      {
+        "total_ms": 29546.083182,
+        "categories_percent": {
+          "other": 1.4921064064037404,
+          "matrix": 30.054663913658242,
+          "attention": 68.26289588288752
+        },
+        "matrix_types_percent": {
+          "q4_k_r4": 25.27656526923264,
+          "q6_k_r4": 4.778098644425592
+        },
+        "matrix_roles_percent": {
+          "Kcur+Qcur": 1.6280838209142223,
+          "Vcur": 0.24139240237247636,
+          "attn_out": 2.6134902391069827,
+          "ffn_up_gate": 15.261711585334968,
+          "ffn_down": 8.522963888269743,
+          "Kcur+Qcur+Vcur": 1.6506181106845026,
+          "kqv_out": 0.06531153344804795,
+          "result_output": 0.07109233352729685
+        },
+        "logical_weight_gb_s": 0.15822918440320108,
+        "completion_tail_percent": 0.0027482492180035734,
+        "active_worker_internal_wait_ms": {
+          "other": 0.0,
+          "matrix": 113.89400000000003,
+          "attention": 0.0
+        },
+        "active_worker_finish_spread_ms": {
+          "other": 63.23900000000001,
+          "matrix": 599.5459999999996,
+          "attention": 1379.9140000000002
+        }
+      }
+    ]
+  },
+  "decode": {
+    "matrix_roles_percent": {
+      "Kcur+Qcur": 2.354254850751289,
+      "Vcur": 0.5661793117518907,
+      "result_output": 8.197121540558104,
+      "Kcur+Qcur+Vcur": 2.5390345399762726,
+      "ffn_down": 14.259444886556091,
+      "attn_out": 4.944124950312034,
+      "ffn_up_gate": 22.93689859887192
+    },
+    "release_tokens_s": 4.740092171835884,
+    "release_ms": [
+      13718.187213,
+      13501.847154,
+      13501.543043
+    ],
+    "profile_on_ms": [
+      13541.480746,
+      13604.00607
+    ],
+    "profile_off_ms": [
+      13548.315363,
+      13487.395589
+    ],
+    "tracing_elapsed_change_percent": 0.40604023395165445,
+    "profiler_off_vs_release_percent": 0.11856394030693718,
+    "categories_percent": {
+      "matrix": 55.79705867877749,
+      "attention": 40.69407278383424,
+      "other": 3.0924803928839486
+    },
+    "matrix_types_percent": {
+      "q4_k_r4": 38.58180852063248,
+      "q6_k_r4": 17.21525015814537
+    },
+    "logical_weight_gb_s": 11.874116255377139,
+    "completion_tail_percent": 1.538992416369808,
+    "reps": [
+      {
+        "total_ms": 13541.480746,
+        "categories_percent": {
+          "other": 2.9818969400316053,
+          "matrix": 55.894950795804085,
+          "attention": 40.72152154873351
+        },
+        "matrix_types_percent": {
+          "q4_k_r4": 38.6757629998999,
+          "q6_k_r4": 17.219187795904606
+        },
+        "matrix_roles_percent": {
+          "Kcur+Qcur": 2.354159090719582,
+          "Vcur": 0.5072118868557873,
+          "attn_out": 5.0701323797459015,
+          "ffn_up_gate": 22.974939435031853,
+          "ffn_down": 14.251019044354098,
+          "Kcur+Qcur+Vcur": 2.531495679313065,
+          "result_output": 8.20599327978397
+        },
+        "logical_weight_gb_s": 11.880634101924137,
+        "completion_tail_percent": 1.5645556344535538,
+        "active_worker_internal_wait_ms": {
+          "other": 0.0,
+          "matrix": 90.68300000000178,
+          "attention": 460.7459999999986
+        },
+        "active_worker_finish_spread_ms": {
+          "other": 350.6969999999658,
+          "matrix": 108.47000000000365,
+          "attention": 88.73700000000079
+        }
+      },
+      {
+        "total_ms": 13604.00607,
+        "categories_percent": {
+          "other": 3.2030638457362914,
+          "matrix": 55.6991665617509,
+          "attention": 40.66662401893496
+        },
+        "matrix_types_percent": {
+          "q4_k_r4": 38.48785404136506,
+          "q6_k_r4": 17.211312520386134
+        },
+        "matrix_roles_percent": {
+          "Kcur+Qcur": 2.3543506107829955,
+          "Vcur": 0.625146736647994,
+          "attn_out": 4.818117520878166,
+          "ffn_up_gate": 22.898857762711987,
+          "ffn_down": 14.267870728758083,
+          "Kcur+Qcur+Vcur": 2.5465734006394802,
+          "result_output": 8.188249801332237
+        },
+        "logical_weight_gb_s": 11.867598408830139,
+        "completion_tail_percent": 1.5134291982860624,
+        "active_worker_internal_wait_ms": {
+          "other": 0.0,
+          "matrix": 84.21700000000197,
+          "attention": 476.97299999999996
+        },
+        "active_worker_finish_spread_ms": {
+          "other": 383.10699999995995,
+          "matrix": 91.87300000000218,
+          "attention": 113.25200000000116
+        }
+      }
+    ]
+  },
+  "memory": {
+    "production": {
+      "VmRSS": 2740256,
+      "VmSwap": 0,
+      "timed_major_faults": 0
+    },
+    "profile": {
+      "VmRSS": 2740448,
+      "VmSwap": 0,
+      "timed_major_faults": 0
+    }
+  }
+}

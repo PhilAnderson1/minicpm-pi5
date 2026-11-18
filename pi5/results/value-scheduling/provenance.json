@@ -1,0 +1,16 @@
+{
+  "commit": "5ead51c21a7f24f09c66cec5c70dac80495b719a",
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "sha256": {
+    "build-pi5-deb/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+    "build-pi5-deb/ggml/src/libggml.a": "cea630e5925fface991f6194b591662f7e844b47319860d97133f5240b756dd5",
+    "ggml/src/iqk/fa/iqk_fa_128_value_registers.h": "579a0cb792bcc420a9c6e7633eb8f4f173ed7afed244aaa1f990e978547767cb",
+    "ggml/src/iqk/fa/iqk_fa_128_prefill.h": "b05cc7ee0d1850b7c038cc3659721a306bb3bc67e29181ebe2c8b91d9f270d03",
+    "build-value-scheduling/kernels.cpp": "d6305f0210ba9850a8710434c0d0122438907f3f719005d49ceb8ea0765b1fd5",
+    "build-value-scheduling/bench.cpp": "04504f1db5de83ad8d078d1620eae07d1892635d0e69a1598b3626fcfa5aeb84",
+    "build-value-scheduling/bench": "f0d86e9e6c7882e83bf54988086bae84887aa21bb529b1dd3ca7655c8fd23080",
+    "build-value-scheduling/model": "a55f110f48668fab61db352097da2bf62236053f77ef6a2aaa40870193c3719b",
+    "build-value-scheduling/wrap.cpp": "8569c43e68347d1cfd75cd3d4164c3c9fbaf8f639fd957637753c5e003d63f2c",
+    "build-value-scheduling/model.cpp": "6c60db1ad77fd0ada9ead90f34cfecb3505e7542625f9a76ad699181f34f2ade"
+  }
+}

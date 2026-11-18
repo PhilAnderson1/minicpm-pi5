@@ -1,0 +1,13 @@
+{
+  "reference": "validated 0.1.3~rc1 lane-FMA serving archive",
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "sha256": {
+    "build-softmax-value-fusion/bench": "25d8c03807563583a5a6dae7a522200d3448de93284d0ad2e48640f846b68d1c",
+    "build-softmax-value-fusion/model": "793f8c4c138f545ca34215c57052999fa2f4784924a8161df9ff950b1f3c18ee",
+    "build-softmax-value-fusion/kernels.cpp": "d8302fb99cc6e7dddc33ef640c6ab47bb1ef21c68338348113b654d33d23f76a",
+    "build-softmax-value-fusion/model.cpp": "6c60db1ad77fd0ada9ead90f34cfecb3505e7542625f9a76ad699181f34f2ade",
+    "build-softmax-value-fusion/wrap.cpp": "86c080018d35e609a4a4f5fcc30387ee340b6ccb4fd0b9ebdc7b604bfd71c7da",
+    "build-value-lane-serving/libggml.a": "5f0f4dad770d3eac59213da622652da565954e67e312d07495f59783e8dd18da",
+    "build-pi5-deb/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0"
+  }
+}

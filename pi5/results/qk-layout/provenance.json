@@ -1,0 +1,12 @@
+{
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "reference": "validated 0.1.3~rc1 serving archive",
+  "sha256": {
+    "build-qk-layout/bench": "3de8eb1d3aa3a438a6a67197da9022e8de011d5cfefd2b11815f47b13998c28d",
+    "build-qk-layout/confirm": "a9ccdd7627ab2ec2b5e3d3f7ec5f17f6338525b8b743090ccdf28e59e237cc0e",
+    "build-qk-layout/kernels.cpp": "b15a56c4984f259a6caae5a43fbc7cff37b1d71ac762d26c3139c794c6b290a3",
+    "build-qk-layout/bench.cpp": "bb770be1c237c3b511720ae2efb9724b8909eb73cdf36ada1b6a604d2151bbf0",
+    "build-qk-layout/confirm.cpp": "edf6c12499593c950f9082f23a7af20dbc593a571736cebabe3a698cfaf2712b",
+    "build-value-lane-serving/libggml.a": "5f0f4dad770d3eac59213da622652da565954e67e312d07495f59783e8dd18da"
+  }
+}

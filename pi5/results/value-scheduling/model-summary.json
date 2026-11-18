@@ -1,0 +1,36 @@
+{
+  "128": {
+    "production_tps": 17.559456,
+    "lane_tps": 18.195629,
+    "gain_percent": 3.622965312820625,
+    "paired_gain_percent": [
+      2.372359358292875,
+      3.622965312820625,
+      5.010185795726008
+    ],
+    "major_faults": 0,
+    "peak_swap_kib": 0,
+    "peak_rss_kib": 2660256,
+    "max_temp_mC": 64450,
+    "frequency_kHz": [
+      2400000
+    ]
+  },
+  "512": {
+    "production_tps": 17.407525,
+    "lane_tps": 17.970333,
+    "gain_percent": 3.23313049959717,
+    "paired_gain_percent": [
+      2.998425190712628,
+      3.352492671991003,
+      3.960393117680394
+    ],
+    "major_faults": 0,
+    "peak_swap_kib": 0,
+    "peak_rss_kib": 2733488,
+    "max_temp_mC": 69400,
+    "frequency_kHz": [
+      2400000
+    ]
+  }
+}

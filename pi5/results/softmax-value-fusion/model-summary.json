@@ -1,0 +1,36 @@
+{
+  "128": {
+    "production_tps": 18.339256,
+    "fused_tps": 19.359245,
+    "gain_percent": 5.561779605454009,
+    "paired_gain_percent": [
+      6.985741801148393,
+      5.47607825300831,
+      4.44205588274682
+    ],
+    "major_faults": 0,
+    "peak_swap_kib": 0,
+    "peak_rss_kib": 2665600,
+    "max_temp_mC": 63900,
+    "frequency_kHz": [
+      2400000
+    ]
+  },
+  "512": {
+    "production_tps": 17.957846,
+    "fused_tps": 18.933936,
+    "gain_percent": 5.435451445568695,
+    "paired_gain_percent": [
+      5.553749305931865,
+      5.266984692930321,
+      5.245166647056476
+    ],
+    "major_faults": 0,
+    "peak_swap_kib": 0,
+    "peak_rss_kib": 2733584,
+    "max_temp_mC": 68300,
+    "frequency_kHz": [
+      2400000
+    ]
+  }
+}

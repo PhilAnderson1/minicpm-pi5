@@ -1,0 +1,13 @@
+{
+  "head": "5ead51c21a7f24f09c66cec5c70dac80495b719a",
+  "sha256": {
+    "build-pi5-deb/ggml/src/libggml.a": "cea630e5925fface991f6194b591662f7e844b47319860d97133f5240b756dd5",
+    "build-pi5-deb/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+    "build-profile-v012-16k/analyze.py": "ccd4dedbaa5d69869b9f4c7e0ef08c7d8583a7d0392fa6b23f17484d8b2bc959",
+    "build-profile-v012-16k/prepare.py": "a55daf9538c6d47eefbbcb1be84cc903e3754b266b801ca815c12fd2998b72a7",
+    "build-profile-v012-16k/summarize.py": "c4d49676b6fc8b722a843c3474904929f50a56ee19c86e634a5045325634fe39",
+    "build-profile-v012-16k/run.py": "b110f6343df5d2c6baa2ef910093be3c95ccd04d0b2693a43b7758a825bfe84b",
+    "build-profile-v012-16k/model.cpp": "28b7530a14f15bf3f0e4af1608bc8308117cc4d54576baec2febdcee950875ac",
+    "build-profile-v012-16k/ggml.c": "880474218c806be0e17fe6c1d19aeb571f08bcc59acb8ce45f2def39b350d213"
+  }
+}

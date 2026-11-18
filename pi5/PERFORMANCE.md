@@ -1,19 +1,19 @@
 # Measurements and limitations
 
-The current README tables were measured on 2026-11-17 with **0.1.2~rc4** on a
+The current README tables were measured on 2026-11-17 with **0.1.3~rc2** on a
 4 GB Raspberry Pi 5, MiniCPM5-2B-Q4_K_M, FP16 KV and runtime repacking. They compare
 the preserved ik_llama.cpp baseline (2a0832d7 plus the zero-activation metadata
-fix, shared libraries) with the mostly static rc4 release engine. Build/linkage
+fix, shared libraries) with the mostly static 0.1.3~rc2 engine. Build/linkage
 differences are included. These are single-machine synthetic-context measurements.
 
 ## Decode
 
 | Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
 |---|---:|---:|---:|
-| 1K | 7.48 tokens/s | 7.51 tokens/s | 0.5% |
-| 8K | 5.01 tokens/s | 5.81 tokens/s | 15.9% |
-| 15K | 3.72 tokens/s | 4.77 tokens/s | 28.1% |
-| 23K | 2.89 tokens/s | 3.96 tokens/s | 36.8% |
+| 1K | 7.69 tokens/s | 7.68 tokens/s | -0.2% |
+| 8K | 4.96 tokens/s | 5.79 tokens/s | 16.7% |
+| 15K | 3.70 tokens/s | 4.78 tokens/s | 29.3% |
+| 23K | 2.88 tokens/s | 3.95 tokens/s | 37.1% |
 
 Each sample generates 64 fixed-input tokens after a deterministic synthetic KV
 prefix. Three pairs alternate execution order; rates are total tokens divided
@@ -24,10 +24,10 @@ changes since those tables should not be attributed solely to new optimizations.
 
 | Retained context | ik_llama.cpp | MiniCPM-PI5 | Gain |
 |---|---:|---:|---:|
-| 1K | 42.88 tokens/s | 47.65 tokens/s | 11.1% |
-| 8K | 18.92 tokens/s | 26.69 tokens/s | 41.1% |
-| 15K | 12.22 tokens/s | 18.42 tokens/s | 50.7% |
-| 23K | 8.68 tokens/s | 13.68 tokens/s | 57.5% |
+| 1K | 42.31 tokens/s | 48.46 tokens/s | 14.5% |
+| 8K | 18.98 tokens/s | 28.38 tokens/s | 49.5% |
+| 15K | 12.18 tokens/s | 20.05 tokens/s | 64.6% |
+| 23K | 8.69 tokens/s | 15.08 tokens/s | 73.5% |
 
 Each sample processes 128 new tokens after the retained prefix, with 24K context
 capacity, microbatch 512 and four prefill threads. Rates use median elapsed time
@@ -36,9 +36,10 @@ from three alternating pairs. This is not whole-prompt throughput from empty.
 All timed samples had zero major faults and monitoring recorded zero process
 swap. Decode logits match exactly across builds and repetitions. Prefill logits
 repeat exactly within each build; cross-build equality is intentionally changed
-by rc4's FP32 final normalization fix.
+by the FP32 final normalization fix introduced in 0.1.2.
 
-[Raw timings, hashes, settings and reproduction](results/rc4-throughput/README.md).
+[Raw timings, hashes, settings and reproduction](results/v013-rc2-throughput/README.md).
+The previous [0.1.2 tables](results/rc4-throughput/README.md) remain archived.
 Earlier [prefill](results/prefill-registers-total/README.md) and
 [23K decode](results/decode-23k/README.md) measurements remain archived.
 The historical incremental and serving measurements below used earlier builds;
@@ -50,7 +51,24 @@ A separate matched v0.1.1 versus rc4 comparison found 1.7–2.6% gains in the
 64-token samples. Short 1K results were variable; a focused recheck did not
 reproduce the initial 5.5% slowdown, though a small penalty is not ruled out.
 This does not establish why older historical headline rates differ.
-[Full results and follow-up](results/decode-release-ab/README.md).
+[Full results and follow-up](results/decode-release-ab/README.md). A subsequent
+[historical-build check](results/historical-decode/README.md) found that even the
+unchanged original benchmark and libraries no longer reproduce the older rates.
+Matched 64-token tests put v0.1.2 level at 1K and faster at 8K–23K than that original
+engine; the exact historical environmental cause remains unresolved.
+
+## Earlier v0.1.2 16K cost profile
+
+A controlled v0.1.2 profile attributes about 68% of prefill time to attention
+and 30% to projections; decode is about 41% attention and 56% projections.
+Q4 projections account for 25–26% of total prefill, Q6 about 5%. Other graph
+operations are a small fraction. These shares include waits, not just arithmetic.
+[Profile, controls and potential-gain estimates](results/profile-v012-16k/README.md). The follow-up
+[phase/counter audit](results/attention-phases-v012/README.md) attributes about
+42%/15%/43% of the three measured attention phases to Q×K, mask/softmax and values.
+It identifies no clear DRAM-bandwidth bottleneck; value-kernel load/FMA scheduling
+was subsequently tested and integrated as lane-FMA instructions; see the
+[incremental measurements](results/value-scheduling/README.md).
 
 ## Incremental prefill kernel experiments
 
@@ -125,3 +143,68 @@ wall-clock percentages. Per-worker traces showed 4–5% average arrival slack ne
 24K, but dynamic scheduling did not turn it into a speedup. Waiting time is not
 a promise of recoverable performance. Relevant compact CSVs are retained in
 `results/softmax-audit/` and `results/worker-balance/`.
+
+
+## Lane-FMA value instruction integration
+
+A private prototype keeps the current register tile and arithmetic order but
+forces lane FMAs, eliminating 12 compiler-generated broadcasts per inner-loop
+iteration. At a synthetic 16K prefix, full-model incremental prefill improved
+from 17.56 to 18.20 tokens/s for 128 new tokens (+3.6%), and from 17.41 to 17.97
+for 512 (+3.2%), across three alternating pairs. Logits, newly written FP16 KV,
+and four decode continuation steps matched exactly; no process swap or timed
+major faults occurred. Explicit load-ahead scheduling did not help.
+
+The source change is integrated and a private serving candidate passed local
+model/cache/cancellation checks. The 4K HTTP replay/cancellation test also passed. Package 0.1.3~rc1 contains
+the validated server; it is not part of v0.1.2
+or the headline README tables. [Measurements and controls](results/value-scheduling/README.md).
+
+
+Q×K query load-ahead and key-major schedules were also screened against the
+0.1.3~rc1 candidate at a 16K prefix. Complete-attention throughput changes were
+-0.48%/+0.28% and -1.63%/+0.07% for 128/512 new queries respectively, with exact
+outputs. Neither was adopted. [Evidence](results/qk-scheduling/README.md).
+
+A fixed-layout Q×K helper reduced complete-attention instruction counts by about
+8%, but a focused six-pair follow-up measured only +0.80%/+0.70% attention
+throughput at 128/512 new queries, with mixed individual pairs. No full-model
+claim or production integration. [Evidence](results/qk-layout/README.md).
+
+
+## Softmax/value fusion integration
+
+Producing the value kernel's FP16 weights directly inside softmax eliminates
+intermediate FP32 weight stores and repeated conversions. FP32 denominator
+summation and all value arithmetic/rounding remain unchanged. A 16 KiB per-worker
+weight buffer is added; the Q×K score buffer remains. Three alternating full-model
+pairs at a synthetic 16K prefix measured 18.34→19.36 tokens/s (+5.56%) for 128
+new tokens and 17.96→18.93 (+5.44%) for 512. All logits, new KV and four decode
+continuations matched exactly; no swap or timed major faults occurred.
+
+Source integration, local serving/model checks and the 4K HTTP replay/cancellation
+test passed. Package 0.1.3~rc2 contains the validated build.
+[Method and results](results/softmax-value-fusion/README.md).
+
+
+## Refreshed fused-engine 16K cost profile
+
+The 0.1.3~rc2 refresh attributes 64.8–65.5% of prefill to attention and
+32.7–33.9% to projections. Decode remains about 41.3% attention and 55.7%
+projections. All profiled final logits matched the release; trace overhead was
+within approximately ±1.2%. Process swap remained zero, but one untraced private
+sample faulted and system-wide paging occurred in some intervals. These are broad
+cost shares, not small-gain measurements. [Controls and results](results/profile-fused-16k/README.md).
+
+A subsequent key-packing prototype, amortized across four query heads, measured
+-0.33%/-1.08% complete-attention throughput at 128/512 queries. All outputs were
+exact; no full-model testing or integration was justified.
+[Packed-key experiment](results/packed-keys-fused/README.md).
+
+
+A fused-engine cache-blocking sweep covered 1/2/4/8 query groups and
+128/256/512-key spans while preserving 128-key arithmetic. The existing
+four-group/128-key arrangement remained best at 128 and 512 new queries.
+All 196 attention comparisons, including partial-group/tail cases, were exact.
+No changed blocking cleared the screen for full-model testing; production is
+unchanged. [Results](results/cache-blocks-fused/README.md).

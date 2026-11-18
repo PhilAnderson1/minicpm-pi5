@@ -1,0 +1,14 @@
+{
+  "clone": {
+    "fmla_in_function": 64,
+    "dup_in_function": 12
+  },
+  "lane": {
+    "fmla_in_function": 64,
+    "dup_in_function": 0
+  },
+  "ahead": {
+    "fmla_in_function": 64,
+    "dup_in_function": 12
+  }
+}

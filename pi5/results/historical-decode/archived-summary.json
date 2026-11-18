@@ -1,0 +1,25 @@
+{
+  "summary": [
+    {
+      "prefix_tokens": 1024,
+      "historical": 8.1456,
+      "replayed": 7.837036659698235,
+      "change_percent": -3.788098363555359
+    },
+    {
+      "prefix_tokens": 8192,
+      "historical": 6.0483,
+      "replayed": 5.780157490024411,
+      "change_percent": -4.433353338551149
+    },
+    {
+      "prefix_tokens": 15360,
+      "historical": 4.9959,
+      "replayed": 4.623738911334893,
+      "change_percent": -7.449330224085882
+    }
+  ],
+  "max_swap_kib": 21440,
+  "timed_major_faults": 3,
+  "executable_sha256": "36047dad27b50250313db948222dc9118e7242675fbcb21f344c64cffbcb0391"
+}

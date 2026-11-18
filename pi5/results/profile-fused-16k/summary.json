@@ -1,0 +1,756 @@
+{
+  "long128": {
+    "median_total_ms": 6503.4068265,
+    "op_percent": {
+      "FUSED_UP_GATE": 17.212706169287205,
+      "GET_ROWS": 0.003705852352207003,
+      "FUSED_RMS_NORM": 0.2562555953023733,
+      "CPY": 0.08721674275774549,
+      "ROPE": 0.179218036918332,
+      "MUL_MAT": 16.712202139422732,
+      "FLASH_ATTN_EXT": 64.77367322371408,
+      "ADD": 0.5604142946477926
+    },
+    "op_ms": {
+      "FUSED_UP_GATE": 1119.4109999999998,
+      "GET_ROWS": 0.241,
+      "FUSED_RMS_NORM": 16.665499999999998,
+      "CPY": 5.671999999999998,
+      "ROPE": 11.654999999999998,
+      "MUL_MAT": 1086.8709999999996,
+      "FLASH_ATTN_EXT": 4212.489,
+      "ADD": 36.445499999999996
+    },
+    "tracing_on_off_percent": [
+      1.2564722582625976,
+      -0.9792640466628866
+    ],
+    "reps": [
+      {
+        "total_ms": 6510.324465,
+        "byop_ms": {
+          "GET_ROWS": 0.23500000000000001,
+          "FUSED_RMS_NORM": 16.83,
+          "MUL_MAT": 1096.0229999999997,
+          "ROPE": 11.405999999999995,
+          "CPY": 5.621999999999997,
+          "FLASH_ATTN_EXT": 4210.872,
+          "ADD": 35.99400000000001,
+          "FUSED_UP_GATE": 1119.3719999999996
+        },
+        "byop_count": {
+          "GET_ROWS": 3,
+          "FUSED_RMS_NORM": 85,
+          "MUL_MAT": 148,
+          "ROPE": 84,
+          "CPY": 84,
+          "FLASH_ATTN_EXT": 42,
+          "ADD": 84,
+          "FUSED_UP_GATE": 42
+        },
+        "byop_percent": {
+          "GET_ROWS": 0.0036096511205144675,
+          "FUSED_RMS_NORM": 0.25851246109897225,
+          "MUL_MAT": 16.835151702381392,
+          "ROPE": 0.17519864119399148,
+          "CPY": 0.0863551429767333,
+          "FLASH_ATTN_EXT": 64.67990992826807,
+          "ADD": 0.5528756699225437,
+          "FUSED_UP_GATE": 17.193797421585188
+        },
+        "examples": {
+          "GET_ROWS": [
+            "attn_out-41",
+            "inp_embd",
+            "sainp_get_rows-41"
+          ],
+          "FUSED_RMS_NORM": [
+            "attn_norm-0",
+            "attn_norm-1",
+            "attn_norm-10",
+            "attn_norm-11",
+            "attn_norm-12",
+            "attn_norm-13",
+            "attn_norm-14",
+            "attn_norm-15"
+          ],
+          "MUL_MAT": [
+            "Qcur-0",
+            "Qcur-1",
+            "Qcur-10",
+            "Qcur-11",
+            "Qcur-12",
+            "Qcur-13",
+            "Qcur-14",
+            "Qcur-15"
+          ],
+          "ROPE": [
+            "Kcur_roped-0",
+            "Kcur_roped-1",
+            "Kcur_roped-10",
+            "Kcur_roped-11",
+            "Kcur_roped-12",
+            "Kcur_roped-13",
+            "Kcur_roped-14",
+            "Kcur_roped-15"
+          ],
+          "CPY": [
+            "cache_k_l0 (view) (copy of Kcur_roped-0)",
+            "cache_k_l1 (view) (copy of Kcur_roped-1)",
+            "cache_k_l10 (view) (copy of Kcur_roped-10)",
+            "cache_k_l11 (view) (copy of Kcur_roped-11)",
+            "cache_k_l12 (view) (copy of Kcur_roped-12)",
+            "cache_k_l13 (view) (copy of Kcur_roped-13)",
+            "cache_k_l14 (view) (copy of Kcur_roped-14)",
+            "cache_k_l15 (view) (copy of Kcur_roped-15)"
+          ],
+          "FLASH_ATTN_EXT": [
+            "fa-0",
+            "fa-1",
+            "fa-10",
+            "fa-11",
+            "fa-12",
+            "fa-13",
+            "fa-14",
+            "fa-15"
+          ],
+          "ADD": [
+            "ffn_norm-0",
+            "ffn_norm-1",
+            "ffn_norm-10",
+            "ffn_norm-11",
+            "ffn_norm-12",
+            "ffn_norm-13",
+            "ffn_norm-14",
+            "ffn_norm-15"
+          ],
+          "FUSED_UP_GATE": [
+            "ffn_up_gate-0",
+            "ffn_up_gate-1",
+            "ffn_up_gate-10",
+            "ffn_up_gate-11",
+            "ffn_up_gate-12",
+            "ffn_up_gate-13",
+            "ffn_up_gate-14",
+            "ffn_up_gate-15"
+          ]
+        }
+      },
+      {
+        "total_ms": 6496.489188,
+        "byop_ms": {
+          "GET_ROWS": 0.247,
+          "FUSED_RMS_NORM": 16.500999999999998,
+          "MUL_MAT": 1077.7189999999998,
+          "ROPE": 11.904,
+          "CPY": 5.721999999999999,
+          "FLASH_ATTN_EXT": 4214.105999999999,
+          "ADD": 36.89699999999999,
+          "FUSED_UP_GATE": 1119.45
+        },
+        "byop_count": {
+          "GET_ROWS": 3,
+          "FUSED_RMS_NORM": 85,
+          "MUL_MAT": 148,
+          "ROPE": 84,
+          "CPY": 84,
+          "FLASH_ATTN_EXT": 42,
+          "ADD": 84,
+          "FUSED_UP_GATE": 42
+        },
+        "byop_percent": {
+          "GET_ROWS": 0.003802053583899538,
+          "FUSED_RMS_NORM": 0.25399872950577435,
+          "MUL_MAT": 16.589252576464073,
+          "ROPE": 0.1832374326426725,
+          "CPY": 0.0880783425387577,
+          "FLASH_ATTN_EXT": 64.8674365191601,
+          "ADD": 0.5679529193730414,
+          "FUSED_UP_GATE": 17.231614916989223
+        },
+        "examples": {
+          "GET_ROWS": [
+            "attn_out-41",
+            "inp_embd",
+            "sainp_get_rows-41"
+          ],
+          "FUSED_RMS_NORM": [
+            "attn_norm-0",
+            "attn_norm-1",
+            "attn_norm-10",
+            "attn_norm-11",
+            "attn_norm-12",
+            "attn_norm-13",
+            "attn_norm-14",
+            "attn_norm-15"
+          ],
+          "MUL_MAT": [
+            "Qcur-0",
+            "Qcur-1",
+            "Qcur-10",
+            "Qcur-11",
+            "Qcur-12",
+            "Qcur-13",
+            "Qcur-14",
+            "Qcur-15"
+          ],
+          "ROPE": [
+            "Kcur_roped-0",
+            "Kcur_roped-1",
+            "Kcur_roped-10",
+            "Kcur_roped-11",
+            "Kcur_roped-12",
+            "Kcur_roped-13",
+            "Kcur_roped-14",
+            "Kcur_roped-15"
+          ],
+          "CPY": [
+            "cache_k_l0 (view) (copy of Kcur_roped-0)",
+            "cache_k_l1 (view) (copy of Kcur_roped-1)",
+            "cache_k_l10 (view) (copy of Kcur_roped-10)",
+            "cache_k_l11 (view) (copy of Kcur_roped-11)",
+            "cache_k_l12 (view) (copy of Kcur_roped-12)",
+            "cache_k_l13 (view) (copy of Kcur_roped-13)",
+            "cache_k_l14 (view) (copy of Kcur_roped-14)",
+            "cache_k_l15 (view) (copy of Kcur_roped-15)"
+          ],
+          "FLASH_ATTN_EXT": [
+            "fa-0",
+            "fa-1",
+            "fa-10",
+            "fa-11",
+            "fa-12",
+            "fa-13",
+            "fa-14",
+            "fa-15"
+          ],
+          "ADD": [
+            "ffn_norm-0",
+            "ffn_norm-1",
+            "ffn_norm-10",
+            "ffn_norm-11",
+            "ffn_norm-12",
+            "ffn_norm-13",
+            "ffn_norm-14",
+            "ffn_norm-15"
+          ],
+          "FUSED_UP_GATE": [
+            "ffn_up_gate-0",
+            "ffn_up_gate-1",
+            "ffn_up_gate-10",
+            "ffn_up_gate-11",
+            "ffn_up_gate-12",
+            "ffn_up_gate-13",
+            "ffn_up_gate-14",
+            "ffn_up_gate-15"
+          ]
+        }
+      }
+    ]
+  },
+  "long512": {
+    "median_total_ms": 26401.030342,
+    "op_percent": {
+      "FUSED_UP_GATE": 16.737259287265996,
+      "GET_ROWS": 0.006086779728351191,
+      "FUSED_RMS_NORM": 0.4431742112422633,
+      "CPY": 0.09464121086232663,
+      "ROPE": 0.3369717692965212,
+      "MUL_MAT": 15.934914133679651,
+      "FLASH_ATTN_EXT": 65.46950064151586,
+      "ADD": 0.7687455799667465
+    },
+    "op_ms": {
+      "FUSED_UP_GATE": 4418.8115,
+      "GET_ROWS": 1.6069999999999998,
+      "FUSED_RMS_NORM": 117.00550000000001,
+      "CPY": 24.984500000000008,
+      "ROPE": 88.96450000000004,
+      "MUL_MAT": 4206.991,
+      "FLASH_ATTN_EXT": 17284.608500000002,
+      "ADD": 202.95699999999994
+    },
+    "tracing_on_off_percent": [
+      -1.6402733338293118,
+      -0.574659872785277
+    ],
+    "reps": [
+      {
+        "total_ms": 26375.569522,
+        "byop_ms": {
+          "GET_ROWS": 1.5769999999999997,
+          "FUSED_RMS_NORM": 113.84200000000003,
+          "MUL_MAT": 4193.099000000001,
+          "ROPE": 88.38000000000004,
+          "CPY": 26.78000000000001,
+          "FLASH_ATTN_EXT": 17282.694,
+          "ADD": 202.506,
+          "FUSED_UP_GATE": 4411.857
+        },
+        "byop_count": {
+          "GET_ROWS": 3,
+          "FUSED_RMS_NORM": 85,
+          "MUL_MAT": 148,
+          "ROPE": 84,
+          "CPY": 84,
+          "FLASH_ATTN_EXT": 42,
+          "ADD": 84,
+          "FUSED_UP_GATE": 42
+        },
+        "byop_percent": {
+          "GET_ROWS": 0.005979017812997803,
+          "FUSED_RMS_NORM": 0.43161911595897035,
+          "MUL_MAT": 15.897662404986232,
+          "ROPE": 0.3350828118660407,
+          "CPY": 0.10153335258851062,
+          "FLASH_ATTN_EXT": 65.52538698959434,
+          "ADD": 0.767778681825576,
+          "FUSED_UP_GATE": 16.727058713632882
+        },
+        "examples": {
+          "GET_ROWS": [
+            "attn_out-41",
+            "inp_embd",
+            "sainp_get_rows-41"
+          ],
+          "FUSED_RMS_NORM": [
+            "attn_norm-0",
+            "attn_norm-1",
+            "attn_norm-10",
+            "attn_norm-11",
+            "attn_norm-12",
+            "attn_norm-13",
+            "attn_norm-14",
+            "attn_norm-15"
+          ],
+          "MUL_MAT": [
+            "Qcur-0",
+            "Qcur-1",
+            "Qcur-10",
+            "Qcur-11",
+            "Qcur-12",
+            "Qcur-13",
+            "Qcur-14",
+            "Qcur-15"
+          ],
+          "ROPE": [
+            "Kcur_roped-0",
+            "Kcur_roped-1",
+            "Kcur_roped-10",
+            "Kcur_roped-11",
+            "Kcur_roped-12",
+            "Kcur_roped-13",
+            "Kcur_roped-14",
+            "Kcur_roped-15"
+          ],
+          "CPY": [
+            "cache_k_l0 (view) (copy of Kcur_roped-0)",
+            "cache_k_l1 (view) (copy of Kcur_roped-1)",
+            "cache_k_l10 (view) (copy of Kcur_roped-10)",
+            "cache_k_l11 (view) (copy of Kcur_roped-11)",
+            "cache_k_l12 (view) (copy of Kcur_roped-12)",
+            "cache_k_l13 (view) (copy of Kcur_roped-13)",
+            "cache_k_l14 (view) (copy of Kcur_roped-14)",
+            "cache_k_l15 (view) (copy of Kcur_roped-15)"
+          ],
+          "FLASH_ATTN_EXT": [
+            "fa-0",
+            "fa-1",
+            "fa-10",
+            "fa-11",
+            "fa-12",
+            "fa-13",
+            "fa-14",
+            "fa-15"
+          ],
+          "ADD": [
+            "ffn_norm-0",
+            "ffn_norm-1",
+            "ffn_norm-10",
+            "ffn_norm-11",
+            "ffn_norm-12",
+            "ffn_norm-13",
+            "ffn_norm-14",
+            "ffn_norm-15"
+          ],
+          "FUSED_UP_GATE": [
+            "ffn_up_gate-0",
+            "ffn_up_gate-1",
+            "ffn_up_gate-10",
+            "ffn_up_gate-11",
+            "ffn_up_gate-12",
+            "ffn_up_gate-13",
+            "ffn_up_gate-14",
+            "ffn_up_gate-15"
+          ]
+        }
+      },
+      {
+        "total_ms": 26426.491162,
+        "byop_ms": {
+          "GET_ROWS": 1.6369999999999998,
+          "FUSED_RMS_NORM": 120.16900000000001,
+          "MUL_MAT": 4220.883,
+          "ROPE": 89.54900000000004,
+          "CPY": 23.189000000000007,
+          "FLASH_ATTN_EXT": 17286.523,
+          "ADD": 203.4079999999999,
+          "FUSED_UP_GATE": 4425.7660000000005
+        },
+        "byop_count": {
+          "GET_ROWS": 3,
+          "FUSED_RMS_NORM": 85,
+          "MUL_MAT": 148,
+          "ROPE": 84,
+          "CPY": 84,
+          "FLASH_ATTN_EXT": 42,
+          "ADD": 84,
+          "FUSED_UP_GATE": 42
+        },
+        "byop_percent": {
+          "GET_ROWS": 0.006194541643704579,
+          "FUSED_RMS_NORM": 0.45472930652555626,
+          "MUL_MAT": 15.97216586237307,
+          "ROPE": 0.33886072672700157,
+          "CPY": 0.08774906913614265,
+          "FLASH_ATTN_EXT": 65.41361429343739,
+          "ADD": 0.7697124781079171,
+          "FUSED_UP_GATE": 16.74745986089911
+        },
+        "examples": {
+          "GET_ROWS": [
+            "attn_out-41",
+            "inp_embd",
+            "sainp_get_rows-41"
+          ],
+          "FUSED_RMS_NORM": [
+            "attn_norm-0",
+            "attn_norm-1",
+            "attn_norm-10",
+            "attn_norm-11",
+            "attn_norm-12",
+            "attn_norm-13",
+            "attn_norm-14",
+            "attn_norm-15"
+          ],
+          "MUL_MAT": [
+            "Qcur-0",
+            "Qcur-1",
+            "Qcur-10",
+            "Qcur-11",
+            "Qcur-12",
+            "Qcur-13",
+            "Qcur-14",
+            "Qcur-15"
+          ],
+          "ROPE": [
+            "Kcur_roped-0",
+            "Kcur_roped-1",
+            "Kcur_roped-10",
+            "Kcur_roped-11",
+            "Kcur_roped-12",
+            "Kcur_roped-13",
+            "Kcur_roped-14",
+            "Kcur_roped-15"
+          ],
+          "CPY": [
+            "cache_k_l0 (view) (copy of Kcur_roped-0)",
+            "cache_k_l1 (view) (copy of Kcur_roped-1)",
+            "cache_k_l10 (view) (copy of Kcur_roped-10)",
+            "cache_k_l11 (view) (copy of Kcur_roped-11)",
+            "cache_k_l12 (view) (copy of Kcur_roped-12)",
+            "cache_k_l13 (view) (copy of Kcur_roped-13)",
+            "cache_k_l14 (view) (copy of Kcur_roped-14)",
+            "cache_k_l15 (view) (copy of Kcur_roped-15)"
+          ],
+          "FLASH_ATTN_EXT": [
+            "fa-0",
+            "fa-1",
+            "fa-10",
+            "fa-11",
+            "fa-12",
+            "fa-13",
+            "fa-14",
+            "fa-15"
+          ],
+          "ADD": [
+            "ffn_norm-0",
+            "ffn_norm-1",
+            "ffn_norm-10",
+            "ffn_norm-11",
+            "ffn_norm-12",
+            "ffn_norm-13",
+            "ffn_norm-14",
+            "ffn_norm-15"
+          ],
+          "FUSED_UP_GATE": [
+            "ffn_up_gate-0",
+            "ffn_up_gate-1",
+            "ffn_up_gate-10",
+            "ffn_up_gate-11",
+            "ffn_up_gate-12",
+            "ffn_up_gate-13",
+            "ffn_up_gate-14",
+            "ffn_up_gate-15"
+          ]
+        }
+      }
+    ]
+  },
+  "decode": {
+    "median_total_ms": 13475.9476715,
+    "op_percent": {
+      "FUSED_UP_GATE": 22.978531588763218,
+      "GET_ROWS": 0.002552838222800129,
+      "FUSED_RMS_NORM": 0.3802443594007151,
+      "CPY": 0.18002014112058906,
+      "ROPE": 0.3512462133981221,
+      "MUL_MAT": 32.75549837186655,
+      "FLASH_ATTN_EXT": 41.29018668775025,
+      "ADD": 1.704074820800816
+    },
+    "op_ms": {
+      "FUSED_UP_GATE": 3096.587500000001,
+      "GET_ROWS": 0.3440000000000002,
+      "FUSED_RMS_NORM": 51.239000000001894,
+      "CPY": 24.256000000000427,
+      "ROPE": 47.33350000000078,
+      "MUL_MAT": 4414.1090000000095,
+      "FLASH_ATTN_EXT": 5564.23750000001,
+      "ADD": 229.6494999999956
+    },
+    "tracing_on_off_percent": [
+      1.2936248300880582,
+      1.1538845271829468
+    ],
+    "reps": [
+      {
+        "total_ms": 13492.669814,
+        "byop_ms": {
+          "GET_ROWS": 0.3290000000000002,
+          "FUSED_RMS_NORM": 49.263000000001426,
+          "MUL_MAT": 4415.702000000005,
+          "ROPE": 47.186000000000746,
+          "CPY": 21.530000000000385,
+          "FLASH_ATTN_EXT": 5565.943000000006,
+          "ADD": 237.40399999999573,
+          "FUSED_UP_GATE": 3110.589999999996
+        },
+        "byop_count": {
+          "GET_ROWS": 64,
+          "FUSED_RMS_NORM": 5440,
+          "MUL_MAT": 9472,
+          "ROPE": 5376,
+          "CPY": 5376,
+          "FLASH_ATTN_EXT": 2688,
+          "ADD": 5376,
+          "FUSED_UP_GATE": 2688
+        },
+        "byop_percent": {
+          "GET_ROWS": 0.0024383610103511882,
+          "FUSED_RMS_NORM": 0.3651093569997994,
+          "MUL_MAT": 32.72667352623029,
+          "ROPE": 0.34971581347851954,
+          "CPY": 0.1595681232609787,
+          "FLASH_ATTN_EXT": 41.251606070021666,
+          "ADD": 1.7595035176334428,
+          "FUSED_UP_GATE": 23.053925152547986
+        },
+        "examples": {
+          "GET_ROWS": [
+            "inp_embd"
+          ],
+          "FUSED_RMS_NORM": [
+            "attn_norm-0",
+            "attn_norm-1",
+            "attn_norm-10",
+            "attn_norm-11",
+            "attn_norm-12",
+            "attn_norm-13",
+            "attn_norm-14",
+            "attn_norm-15"
+          ],
+          "MUL_MAT": [
+            "Qcur-0",
+            "Qcur-1",
+            "Qcur-10",
+            "Qcur-11",
+            "Qcur-12",
+            "Qcur-13",
+            "Qcur-14",
+            "Qcur-15"
+          ],
+          "ROPE": [
+            "Kcur_roped-0",
+            "Kcur_roped-1",
+            "Kcur_roped-10",
+            "Kcur_roped-11",
+            "Kcur_roped-12",
+            "Kcur_roped-13",
+            "Kcur_roped-14",
+            "Kcur_roped-15"
+          ],
+          "CPY": [
+            "cache_k_l0 (view) (copy of Kcur_roped-0)",
+            "cache_k_l1 (view) (copy of Kcur_roped-1)",
+            "cache_k_l10 (view) (copy of Kcur_roped-10)",
+            "cache_k_l11 (view) (copy of Kcur_roped-11)",
+            "cache_k_l12 (view) (copy of Kcur_roped-12)",
+            "cache_k_l13 (view) (copy of Kcur_roped-13)",
+            "cache_k_l14 (view) (copy of Kcur_roped-14)",
+            "cache_k_l15 (view) (copy of Kcur_roped-15)"
+          ],
+          "FLASH_ATTN_EXT": [
+            "fa-0",
+            "fa-1",
+            "fa-10",
+            "fa-11",
+            "fa-12",
+            "fa-13",
+            "fa-14",
+            "fa-15"
+          ],
+          "ADD": [
+            "ffn_norm-0",
+            "ffn_norm-1",
+            "ffn_norm-10",
+            "ffn_norm-11",
+            "ffn_norm-12",
+            "ffn_norm-13",
+            "ffn_norm-14",
+            "ffn_norm-15"
+          ],
+          "FUSED_UP_GATE": [
+            "ffn_up_gate-0",
+            "ffn_up_gate-1",
+            "ffn_up_gate-10",
+            "ffn_up_gate-11",
+            "ffn_up_gate-12",
+            "ffn_up_gate-13",
+            "ffn_up_gate-14",
+            "ffn_up_gate-15"
+          ]
+        }
+      },
+      {
+        "total_ms": 13459.225529,
+        "byop_ms": {
+          "GET_ROWS": 0.35900000000000026,
+          "FUSED_RMS_NORM": 53.215000000002355,
+          "MUL_MAT": 4412.516000000013,
+          "ROPE": 47.481000000000826,
+          "CPY": 26.98200000000047,
+          "FLASH_ATTN_EXT": 5562.532000000014,
+          "ADD": 221.8949999999955,
+          "FUSED_UP_GATE": 3082.585000000006
+        },
+        "byop_count": {
+          "GET_ROWS": 64,
+          "FUSED_RMS_NORM": 5440,
+          "MUL_MAT": 9472,
+          "ROPE": 5376,
+          "CPY": 5376,
+          "FLASH_ATTN_EXT": 2688,
+          "ADD": 5376,
+          "FUSED_UP_GATE": 2688
+        },
+        "byop_percent": {
+          "GET_ROWS": 0.00266731543524907,
+          "FUSED_RMS_NORM": 0.39537936180163075,
+          "MUL_MAT": 32.784323217502816,
+          "ROPE": 0.35277661331772475,
+          "CPY": 0.20047215898019943,
+          "FLASH_ATTN_EXT": 41.32876730547884,
+          "ADD": 1.648646123968189,
+          "FUSED_UP_GATE": 22.90313802497845
+        },
+        "examples": {
+          "GET_ROWS": [
+            "inp_embd"
+          ],
+          "FUSED_RMS_NORM": [
+            "attn_norm-0",
+            "attn_norm-1",
+            "attn_norm-10",
+            "attn_norm-11",
+            "attn_norm-12",
+            "attn_norm-13",
+            "attn_norm-14",
+            "attn_norm-15"
+          ],
+          "MUL_MAT": [
+            "Qcur-0",
+            "Qcur-1",
+            "Qcur-10",
+            "Qcur-11",
+            "Qcur-12",
+            "Qcur-13",
+            "Qcur-14",
+            "Qcur-15"
+          ],
+          "ROPE": [
+            "Kcur_roped-0",
+            "Kcur_roped-1",
+            "Kcur_roped-10",
+            "Kcur_roped-11",
+            "Kcur_roped-12",
+            "Kcur_roped-13",
+            "Kcur_roped-14",
+            "Kcur_roped-15"
+          ],
+          "CPY": [
+            "cache_k_l0 (view) (copy of Kcur_roped-0)",
+            "cache_k_l1 (view) (copy of Kcur_roped-1)",
+            "cache_k_l10 (view) (copy of Kcur_roped-10)",
+            "cache_k_l11 (view) (copy of Kcur_roped-11)",
+            "cache_k_l12 (view) (copy of Kcur_roped-12)",
+            "cache_k_l13 (view) (copy of Kcur_roped-13)",
+            "cache_k_l14 (view) (copy of Kcur_roped-14)",
+            "cache_k_l15 (view) (copy of Kcur_roped-15)"
+          ],
+          "FLASH_ATTN_EXT": [
+            "fa-0",
+            "fa-1",
+            "fa-10",
+            "fa-11",
+            "fa-12",
+            "fa-13",
+            "fa-14",
+            "fa-15"
+          ],
+          "ADD": [
+            "ffn_norm-0",
+            "ffn_norm-1",
+            "ffn_norm-10",
+            "ffn_norm-11",
+            "ffn_norm-12",
+            "ffn_norm-13",
+            "ffn_norm-14",
+            "ffn_norm-15"
+          ],
+          "FUSED_UP_GATE": [
+            "ffn_up_gate-0",
+            "ffn_up_gate-1",
+            "ffn_up_gate-10",
+            "ffn_up_gate-11",
+            "ffn_up_gate-12",
+            "ffn_up_gate-13",
+            "ffn_up_gate-14",
+            "ffn_up_gate-15"
+          ]
+        }
+      }
+    ]
+  },
+  "timed_major_faults": 1,
+  "memory": {
+    "production": {
+      "VmRSS": 2740208,
+      "VmSwap": 0
+    },
+    "profile": {
+      "VmRSS": 2740864,
+      "VmSwap": 0
+    }
+  }
+}

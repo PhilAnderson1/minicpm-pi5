@@ -1,0 +1,22 @@
+{
+  "source_head": "5ead51c21a7f24f09c66cec5c70dac80495b719a",
+  "hashes": {
+    "build-attention-phases-v012/prepare.py": "72d4d01b8f5634d57968cae748c49e360b4f304518bfd392b2aa42fed88097f0",
+    "build-attention-phases-v012/model.cpp": "c4c592308feecd00f14f16e779f565b0dc76d2e0e0d8740e2383f62d70fc805e",
+    "build-attention-phases-v012/run.py": "37bf031c50100f540e385d60138ff0fa1c7446e22e3be9b5a0ca81a4f2bf7d4a",
+    "build-attention-phases-v012/analyze.py": "cabd6b8172e28b091c168f107a5fee9289fab7cee042355c9e605cc7560bedf6",
+    "build-attention-phases-v012/overlay/iqk/fa/iqk_fa_128_prefill.h": "1ba8c67e56f98aaf9bf81d8cfbd76ba1182a1f02d1eab7e6cbe751fda4172c4e",
+    "build-attention-phases-v012/overlay/iqk/fa/phase-pmu.h": "4b1a9c56c26a3a96aa47de9542d871a895e86c965c2b147c0f7d375fb7f5c34a",
+    "build-pi5-deb/ggml/src/libggml.a": "cea630e5925fface991f6194b591662f7e844b47319860d97133f5240b756dd5",
+    "build-pi5-deb/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0"
+  },
+  "pmu_type": "9",
+  "events": {
+    "cpu_cycles": "event=0x0011",
+    "inst_retired": "event=0x0008",
+    "l1d_cache_refill": "event=0x0003",
+    "l1d_cache": "event=0x0004",
+    "l2d_cache_refill": "event=0x0017",
+    "l2d_cache": "event=0x0016"
+  }
+}

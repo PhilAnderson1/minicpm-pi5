@@ -1,0 +1,9 @@
+{
+  "reference": "0.1.3~rc2",
+  "sha256": {
+    "build-packed-keys-fused/bench": "59bcf732daf1fd9ad225695b5e1da199e25330f3029367966e3e187abb5eda00",
+    "build-packed-keys-fused/kernels.cpp": "97d897c81fea3f3fac4954fdbcb6b294a244029a6577c263b52e1db929fe2b15",
+    "build-packed-keys-fused/bench.cpp": "ac4115d838efa05fbb9341f2377993867126d527b3a05f8c769834f937953a59",
+    "build-fused-serving/libggml.a": "861b7709eb1d6140fab45f854e0412969d7ee980e3b236026343fdb70abe097b"
+  }
+}

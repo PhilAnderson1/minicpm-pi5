@@ -1,0 +1,64 @@
+{
+  "summary": [
+    {
+      "workload": "decode",
+      "prefix_tokens": 1024,
+      "baseline": 7.693990019599309,
+      "candidate": 7.679114344705282,
+      "gain_percent": -0.1933414893460106
+    },
+    {
+      "workload": "decode",
+      "prefix_tokens": 8192,
+      "baseline": 4.955720640849057,
+      "candidate": 5.785071314177338,
+      "gain_percent": 16.735218415907106
+    },
+    {
+      "workload": "decode",
+      "prefix_tokens": 15360,
+      "baseline": 3.6955580050780763,
+      "candidate": 4.77781581854825,
+      "gain_percent": 29.285369407895658
+    },
+    {
+      "workload": "decode",
+      "prefix_tokens": 23552,
+      "baseline": 2.879716064272441,
+      "candidate": 3.949005184489342,
+      "gain_percent": 37.13175522695349
+    },
+    {
+      "workload": "prefill",
+      "prefix_tokens": 1024,
+      "baseline": 42.31095369779157,
+      "candidate": 48.45611314708662,
+      "gain_percent": 14.523802732472557
+    },
+    {
+      "workload": "prefill",
+      "prefix_tokens": 8192,
+      "baseline": 18.984691282453902,
+      "candidate": 28.37713887172319,
+      "gain_percent": 49.473796805692636
+    },
+    {
+      "workload": "prefill",
+      "prefix_tokens": 15360,
+      "baseline": 12.178154741766612,
+      "candidate": 20.05115085552554,
+      "gain_percent": 64.64851433327117
+    },
+    {
+      "workload": "prefill",
+      "prefix_tokens": 23552,
+      "baseline": 8.689106024564714,
+      "candidate": 15.075225371068374,
+      "gain_percent": 73.49570057552125
+    }
+  ],
+  "timed_major_faults": 0,
+  "max_swap_kib": 0,
+  "max_rss_kib": 2655184,
+  "validation": "Exact decode logits across builds/repetitions; exact final prefill logits repeat within each build. Prefill differs across builds due to FP32 normalization."
+}

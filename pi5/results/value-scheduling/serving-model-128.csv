@@ -1,0 +1,3 @@
+depth,batch,rep,variant,prefill_ms,prefill_tps,decode_ms,hits,major_faults,swap_before_kib,swap_after_kib,rss_kib,temp_mC,freq_kHz
+16384,128,0,1,6936.350678,18.453508,857.381871,168,0,0,0,2662656,60050,2400000
+16384,128,0,2,6958.892880,18.393730,852.521180,168,0,0,0,2668192,58950,2400000

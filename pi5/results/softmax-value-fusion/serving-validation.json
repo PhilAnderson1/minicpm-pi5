@@ -1,0 +1,25 @@
+{
+  "status": "local_and_http_checks_passed_packaged",
+  "installed_service_changed": false,
+  "kernel_checks": 60,
+  "full_model_prefix_tokens": 16384,
+  "new_token_batches": [
+    128,
+    512
+  ],
+  "exact_logits_new_kv_four_decode_steps": true,
+  "engine_cache_cancellation": "short suite passed",
+  "http": "passed_smoke: 4096-token cold/live parity, cache restore and stream cancellation",
+  "sha256": {
+    "build-fused-serving/bin/llama-server": "fb5b8fe698573141b47910b7b1a84335467b942f570b85de80692f6663cb5b32",
+    "build-fused-serving/libggml.a": "861b7709eb1d6140fab45f854e0412969d7ee980e3b236026343fdb70abe097b",
+    "build-fused-serving/iqk_fa_128_128.cpp.o": "c16326751de111a62db69429a002917bf867fb30e577a1ca868de8f700ea4168",
+    "ggml/src/iqk/fa/iqk_fa_128_softmax.h": "732a7affd2953538bbd375b2413737f0cd2798c134ee48524f2601db7516061f",
+    "ggml/src/iqk/fa/iqk_fa_128_value_registers.h": "224f4974c3042a9e88c222e0d76a9b7460335cc94a41f022853325e654938f63",
+    "ggml/src/iqk/fa/iqk_fa_128_prefill.h": "fe0333ac06f6832007e71eb5aa3396b7cb02b917814ab52204dffdc265e6f6d1"
+  },
+  "package_version": "0.1.3~rc2",
+  "package_sha256": "6981d415ac5198c49c064e26646d1e943c22db42662021a4877508ee949f1f05",
+  "package_bytes": 11503524,
+  "packaged_binary_matches_stripped_http_tested_binary": true
+}

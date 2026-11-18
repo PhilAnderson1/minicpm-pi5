@@ -1,0 +1,43 @@
+{
+  "previous": "v0.1.1",
+  "current": "0.1.2~rc4",
+  "linkage": "mostly static for both",
+  "hashes": {
+    "previous/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+    "previous/ggml/src/libggml.a": "6ecf245edb6426838719e78127dd015dab73df68bb52c14ecd3312e5278ea515",
+    "previous/harness": "4400882d9f627dc61c6337eb9a459cf487e864a5ad40628c0fe6584a697a7bb3",
+    "current/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+    "current/ggml/src/libggml.a": "cea630e5925fface991f6194b591662f7e844b47319860d97133f5240b756dd5",
+    "current/harness": "50091ebc6fa29d44ecabbcbd688cb31fe5bf4afd1447cd82a635dce486d678b5",
+    "source": "86dd43450afbf60db661c2f6e89806ac2751a2d22c489a25710b4a54c8f9d7ae"
+  },
+  "date_utc": "2026-11-17T11:22:49Z",
+  "prefixes": [
+    1024,
+    8192,
+    15360,
+    23552
+  ],
+  "sample_lengths": [
+    16,
+    64
+  ],
+  "repetitions": 3,
+  "context_capacity": "prefix + 512",
+  "batch": 64,
+  "microbatch": 64,
+  "threads": 2,
+  "batch_threads": 4,
+  "kv": "F16",
+  "repacking": true,
+  "prefix_type": "synthetic",
+  "sample_order": "16/64 for pairs 0 and 2; 64/16 for pair 1",
+  "model_sha256": "ec2d5801640099e97d8d7e8003ad4d81f336e757811f03a26173dddf386602fd",
+  "original": "Original 1K/8K/15K Pi serving engine, hash verified against initial manifest",
+  "original_libraries": {
+    "libggml.so": "8cc847683d70f8a6d1d2f0be2d21e1fe5de5f84faa7ee3b3d2e481a45be6965a",
+    "libllama.so": "6171e27f4101899dc90df74d777ef258867157e26c3e75adbd8474015a129dfe"
+  },
+  "original_executable": "00dacc41c3bdc5b2d6db84b8dc28ce0b50b1956b4e101b2a20148a21dc9c92c0",
+  "scope": "Original shared-library engine versus mostly static v0.1.1 and v0.1.2 (rc4-identical engine). Linkage differs; comparison does not isolate source from linkage."
+}

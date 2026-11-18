@@ -1,0 +1,228 @@
+{
+  "128": {
+    "production_ms": [
+      7283.820666,
+      7425.519763
+    ],
+    "private_ms": {
+      "0": [
+        7206.918672,
+        7178.615802
+      ],
+      "1": [
+        7326.500841,
+        7358.490646
+      ],
+      "2": [
+        7420.355483,
+        7198.017181
+      ]
+    },
+    "private_off_vs_release_percent": -2.2013628453496414,
+    "timers_vs_off_percent": 2.081653716385934,
+    "sampled_pmu_vs_off_percent": 1.6185577979102916,
+    "phases": {
+      "qk": {
+        "time_share_percent": 42.10087223557073,
+        "share_repetitions": [
+          42.13775697068497,
+          42.06398750045649
+        ],
+        "sampled": {
+          "calls": 5728,
+          "ns": 261952232,
+          "cycles": 621477273,
+          "instructions": 1834489790,
+          "l1d_refill": 6863175,
+          "l1d_access": 408842360,
+          "l2d_refill": 638200,
+          "l2d_access": 16673940,
+          "enabled": 276460054,
+          "running": 276460054
+        },
+        "instructions_per_cycle": 2.9518212003868403,
+        "cycles_per_sample": 108498.12726955308,
+        "instructions_per_sample": 320267.0722765363,
+        "l1_refill_per_sample": 1198.1799930167597,
+        "l2_refill_per_sample": 111.41759776536313,
+        "l1_refill_access_percent": 1.6786849092642944,
+        "l2_refill_access_percent": 3.827529666053734,
+        "min_running_fraction": 1.0
+      },
+      "softmax": {
+        "time_share_percent": 15.250478524360455,
+        "share_repetitions": [
+          15.262449819773456,
+          15.238507228947453
+        ],
+        "sampled": {
+          "calls": 5728,
+          "ns": 95752941,
+          "cycles": 224802165,
+          "instructions": 463395672,
+          "l1d_refill": 1675602,
+          "l1d_access": 107697928,
+          "l2d_refill": 551524,
+          "l2d_access": 11534048,
+          "enabled": 97987750,
+          "running": 97987750
+        },
+        "instructions_per_cycle": 2.061348795284067,
+        "cycles_per_sample": 39246.188023743016,
+        "instructions_per_sample": 80900.08240223464,
+        "l1_refill_per_sample": 292.528282122905,
+        "l2_refill_per_sample": 96.28561452513966,
+        "l1_refill_access_percent": 1.5558349460539296,
+        "l2_refill_access_percent": 4.781703700210022,
+        "min_running_fraction": 1.0
+      },
+      "value": {
+        "time_share_percent": 42.64864924006881,
+        "share_repetitions": [
+          42.59979320954157,
+          42.697505270596054
+        ],
+        "sampled": {
+          "calls": 5728,
+          "ns": 267140405,
+          "cycles": 627570034,
+          "instructions": 1365225486,
+          "l1d_refill": 5319637,
+          "l1d_access": 248359646,
+          "l2d_refill": 699304,
+          "l2d_access": 15331065,
+          "enabled": 267034633,
+          "running": 267034633
+        },
+        "instructions_per_cycle": 2.175415351332725,
+        "cycles_per_sample": 109561.80761173184,
+        "instructions_per_sample": 238342.43819832403,
+        "l1_refill_per_sample": 928.7075768156425,
+        "l2_refill_per_sample": 122.08519553072625,
+        "l1_refill_access_percent": 2.141908754371473,
+        "l2_refill_access_percent": 4.5613530436404774,
+        "min_running_fraction": 1.0
+      }
+    },
+    "phase_time_worker_mean_as_total_percent": 64.96584387499006
+  },
+  "512": {
+    "production_ms": [
+      29541.345595,
+      29586.55144
+    ],
+    "private_ms": {
+      "0": [
+        29512.213651,
+        29480.458919
+      ],
+      "1": [
+        29674.495809,
+        29588.686234
+      ],
+      "2": [
+        29528.971953,
+        29595.846419
+      ]
+    },
+    "private_off_vs_release_percent": -0.22869824867940425,
+    "timers_vs_off_percent": 0.4585475809373074,
+    "sampled_pmu_vs_off_percent": 0.22400375545488238,
+    "phases": {
+      "qk": {
+        "time_share_percent": 41.96106197972371,
+        "share_repetitions": [
+          41.95840628697067,
+          41.963717672476754
+        ],
+        "sampled": {
+          "calls": 23264,
+          "ns": 1058027566,
+          "cycles": 2522348304,
+          "instructions": 7450693334,
+          "l1d_refill": 27853109,
+          "l1d_access": 1660455535,
+          "l2d_refill": 2788321,
+          "l2d_access": 67531507,
+          "enabled": 1120605320,
+          "running": 1120605320
+        },
+        "instructions_per_cycle": 2.9538717242914125,
+        "cycles_per_sample": 108422.81224209079,
+        "instructions_per_sample": 320267.07935006876,
+        "l1_refill_per_sample": 1197.2622506877578,
+        "l2_refill_per_sample": 119.85561382393398,
+        "l1_refill_access_percent": 1.677437812268788,
+        "l2_refill_access_percent": 4.128918669029554,
+        "min_running_fraction": 1.0
+      },
+      "softmax": {
+        "time_share_percent": 15.355647386470576,
+        "share_repetitions": [
+          15.364277825264283,
+          15.347016947676867
+        ],
+        "sampled": {
+          "calls": 23264,
+          "ns": 393918023,
+          "cycles": 929672986,
+          "instructions": 1886045164,
+          "l1d_refill": 6662884,
+          "l1d_access": 437731908,
+          "l2d_refill": 2738514,
+          "l2d_access": 45555652,
+          "enabled": 404363415,
+          "running": 404363415
+        },
+        "instructions_per_cycle": 2.0287189069727365,
+        "cycles_per_sample": 39961.87181911967,
+        "instructions_per_sample": 81071.40491746904,
+        "l1_refill_per_sample": 286.40319807427784,
+        "l2_refill_per_sample": 117.71466643741402,
+        "l1_refill_access_percent": 1.5221380662978765,
+        "l2_refill_access_percent": 6.011359468634101,
+        "min_running_fraction": 1.0
+      },
+      "value": {
+        "time_share_percent": 42.68329063380571,
+        "share_repetitions": [
+          42.67731588776505,
+          42.689265379846375
+        ],
+        "sampled": {
+          "calls": 23264,
+          "ns": 1084256118,
+          "cycles": 2554520117,
+          "instructions": 5545094203,
+          "l1d_refill": 21037321,
+          "l1d_access": 1008982562,
+          "l2d_refill": 3052586,
+          "l2d_access": 59450637,
+          "enabled": 1086207571,
+          "running": 1086207571
+        },
+        "instructions_per_cycle": 2.170698976335366,
+        "cycles_per_sample": 109805.7134198762,
+        "instructions_per_sample": 238355.14971629987,
+        "l1_refill_per_sample": 904.2864941540578,
+        "l2_refill_per_sample": 131.21501031636865,
+        "l1_refill_access_percent": 2.085003427442783,
+        "l2_refill_access_percent": 5.134656505026178,
+        "min_running_fraction": 1.0
+      }
+    },
+    "phase_time_worker_mean_as_total_percent": 65.38006827347976
+  },
+  "memory": {
+    "production": {
+      "peak_rss_kib": 2674576,
+      "peak_swap_kib": 0,
+      "timed_major_faults": 0
+    },
+    "profile": {
+      "peak_rss_kib": 2674912,
+      "peak_swap_kib": 0,
+      "timed_major_faults": 0
+    }
+  }
+}

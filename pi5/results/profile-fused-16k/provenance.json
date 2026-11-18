@@ -1,0 +1,14 @@
+{
+  "head": "5ead51c21a7f24f09c66cec5c70dac80495b719a",
+  "sha256": {
+    "build-fused-serving/libggml.a": "861b7709eb1d6140fab45f854e0412969d7ee980e3b236026343fdb70abe097b",
+    "build-pi5-deb/src/libllama.a": "13e1df8ab1faafa1c1c12116fc4a24df1bac111657d77b8a866e8eb362601cf0",
+    "build-profile-fused-16k/analyze.py": "ccd4dedbaa5d69869b9f4c7e0ef08c7d8583a7d0392fa6b23f17484d8b2bc959",
+    "build-profile-fused-16k/prepare.py": "a55daf9538c6d47eefbbcb1be84cc903e3754b266b801ca815c12fd2998b72a7",
+    "build-profile-fused-16k/summarize.py": "4d1d62d623520b92efd7ecef43c621cb0c17ed43b3b7bd08989455a6575ac4c9",
+    "build-profile-fused-16k/run.py": "b110f6343df5d2c6baa2ef910093be3c95ccd04d0b2693a43b7758a825bfe84b",
+    "build-profile-fused-16k/model.cpp": "28b7530a14f15bf3f0e4af1608bc8308117cc4d54576baec2febdcee950875ac",
+    "build-profile-fused-16k/ggml.c": "880474218c806be0e17fe6c1d19aeb571f08bcc59acb8ce45f2def39b350d213"
+  },
+  "status": "completed; all private final logits match independent release"
+}

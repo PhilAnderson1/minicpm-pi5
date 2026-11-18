@@ -13,7 +13,7 @@ else
     echo 'Build the server first.' >&2; exit 1
 fi
 mkdir -p "$out"
-for name in integration_test decode_check prefill_check q4_reuse_check softmax_check decode_registers_check; do
+for name in integration_test decode_check prefill_check q4_reuse_check softmax_check decode_registers_check fused_weights_check; do
     if [ "$linkage" = static ]; then
         set -- "$build/src/libllama.a" "$build/ggml/src/libggml.a" -static-libstdc++ -static-libgcc
     else

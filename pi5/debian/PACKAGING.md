@@ -14,7 +14,7 @@ or change system services.
 | Build option | Default | Purpose |
 |---|---|---|
 | `JOBS` | `1` | Compiler jobs; use `2` with sufficient free RAM |
-| `VERSION` | `0.1.2` | Debian package version; change for each release |
+| `VERSION` | `0.1.3` | Debian package version; change for each release |
 | `MINICPM_PI5_PACKAGE_BUILD_DIR` | `build-pi5-deb` | Build and output directory |
 | `--configure-only` | — | Configure without compiling |
 
@@ -89,3 +89,11 @@ For 0.1.2, the final package retains the validated rc4 executable. The rc4
 engine passed cold/replay, cache and cancellation checks, prototype output
 parity, and fresh decode/prefill benchmarks. The private normalization serving
 build passed the user-run 4K HTTP check. See results under `pi5/results/`.
+
+
+For 0.1.3, the final package retains the validated 0.1.3~rc2 executable, including
+lane-FMA value accumulation and fused softmax/value weights. Exact kernel/model
+checks, engine cache/cancellation tests and user-run 4K HTTP replay/cancellation
+checks passed. The user installed rc2 and reported correct operation. Fresh
+three-pair throughput measurements are recorded in
+[the benchmark results](../results/v013-rc2-throughput/README.md).

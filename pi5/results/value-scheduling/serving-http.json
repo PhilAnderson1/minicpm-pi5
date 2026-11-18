@@ -1,0 +1,10 @@
+{
+  "status": "passed_smoke",
+  "prompt_tokens": 4096,
+  "artifacts": {
+    "/home/philip/minicpm-pi5/build-value-lane-serving/bin/llama-server": "838a4a9e1cd31956f9b273029d8a5569d18b32be561164316af9cb895d152090"
+  },
+  "cold_vs_live_short_equal": true,
+  "stream_close_recovery": "passed",
+  "server_exit": 0
+}

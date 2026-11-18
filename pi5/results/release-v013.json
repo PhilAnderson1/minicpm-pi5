@@ -1,0 +1,11 @@
+{
+  "version": "0.1.3",
+  "package_sha256": "f45714ba05c05f32b8454aec4adbc3ef8e609a24c7c1e3f59a75814112a6b7f6",
+  "package_bytes": 11504584,
+  "packaged_binary_sha256": "cc44b1c5d84e745e1d7e0be9fa28eb56e1af394999c91c2f3c4ae118f5c670c1",
+  "identical_to_http_tested_rc2_executable": true,
+  "package_checksums": "passed",
+  "maintainer_script_syntax": "passed",
+  "validation_reference": "pi5/results/softmax-value-fusion/serving-validation.json",
+  "benchmark_reference": "pi5/results/v013-rc2-throughput/README.md"
+}

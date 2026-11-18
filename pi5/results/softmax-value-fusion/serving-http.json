@@ -1,0 +1,10 @@
+{
+  "status": "passed_smoke",
+  "prompt_tokens": 4096,
+  "artifacts": {
+    "/home/philip/minicpm-pi5/build-fused-serving/bin/llama-server": "fb5b8fe698573141b47910b7b1a84335467b942f570b85de80692f6663cb5b32"
+  },
+  "cold_vs_live_short_equal": true,
+  "stream_close_recovery": "passed",
+  "server_exit": 0
+}

@@ -9,7 +9,7 @@ support Bookworm.
 [Download the installer](../../README.md#install), then run:
 
 ```sh
-sudo apt install ./minicpm-pi5_0.1.0_arm64.deb
+sudo apt install ./minicpm-pi5_0.1.3_arm64.deb
 ```
 
 This creates the service account and enables startup on boot. It does not start

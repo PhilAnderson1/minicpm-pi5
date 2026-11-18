@@ -1,0 +1,128 @@
+{
+  "summary": [
+    {
+      "prefix_tokens": 1024,
+      "tokens": 16,
+      "original": 7.874237037859642,
+      "previous": 7.599058655906991,
+      "current": 7.53973820079002,
+      "current_vs_previous_percent": -0.7806289937090982,
+      "previous_vs_original_percent": -3.494667237340987,
+      "current_vs_original_percent": -4.248015845361753,
+      "paired_current_vs_previous": [
+        3.6079123028391447,
+        -6.15944925129207,
+        0.2802233822800204
+      ]
+    },
+    {
+      "prefix_tokens": 1024,
+      "tokens": 64,
+      "original": 7.7448701497690635,
+      "previous": 7.760600270450492,
+      "current": 7.711979303755739,
+      "current_vs_previous_percent": -0.6265103857994614,
+      "previous_vs_original_percent": 0.20310373676049043,
+      "current_vs_original_percent": -0.4246791150437135,
+      "paired_current_vs_previous": [
+        -3.5670578785555573,
+        2.619144322663436,
+        -0.8272981278402369
+      ]
+    },
+    {
+      "prefix_tokens": 8192,
+      "tokens": 16,
+      "original": 5.733297465187357,
+      "previous": 5.715277442154891,
+      "current": 5.929332623985036,
+      "current_vs_previous_percent": 3.745315673589378,
+      "previous_vs_original_percent": -0.3143046936232463,
+      "current_vs_original_percent": 3.4192392770130198,
+      "paired_current_vs_previous": [
+        2.0573784219175772,
+        6.752161017665714,
+        2.410169884752622
+      ]
+    },
+    {
+      "prefix_tokens": 8192,
+      "tokens": 64,
+      "original": 5.728510289345567,
+      "previous": 5.745844032088936,
+      "current": 5.827590303085494,
+      "current_vs_previous_percent": 1.4227025749398825,
+      "previous_vs_original_percent": 0.3025872673320995,
+      "current_vs_original_percent": 1.729594759115738,
+      "paired_current_vs_previous": [
+        4.0816509767539255,
+        0.01380462067182009,
+        0.2514441146377333
+      ]
+    },
+    {
+      "prefix_tokens": 15360,
+      "tokens": 16,
+      "original": 4.652582554666624,
+      "previous": 4.667829642353738,
+      "current": 4.771386379975888,
+      "current_vs_previous_percent": 2.2185200737088406,
+      "previous_vs_original_percent": 0.3277123513224067,
+      "current_vs_original_percent": 2.553502789329354,
+      "paired_current_vs_previous": [
+        2.9804312287776247,
+        0.8544834903543519,
+        2.87365879433652
+      ]
+    },
+    {
+      "prefix_tokens": 15360,
+      "tokens": 64,
+      "original": 4.668433974432848,
+      "previous": 4.647384687269884,
+      "current": 4.727158833605665,
+      "current_vs_previous_percent": 1.7165384770986947,
+      "previous_vs_original_percent": -0.45088539922042425,
+      "current_vs_original_percent": 1.2579134565130268,
+      "paired_current_vs_previous": [
+        -0.9474008968255454,
+        3.1270451328518023,
+        3.111204732048778
+      ]
+    },
+    {
+      "prefix_tokens": 23552,
+      "tokens": 16,
+      "original": 3.8321522678099345,
+      "previous": 3.783146120446194,
+      "current": 3.9687164395390244,
+      "current_vs_previous_percent": 4.905185081007235,
+      "previous_vs_original_percent": -1.2788152437311018,
+      "current_vs_original_percent": 3.563641582726995,
+      "paired_current_vs_previous": [
+        3.52232369504788,
+        5.473524535791907,
+        5.729611449880534
+      ]
+    },
+    {
+      "prefix_tokens": 23552,
+      "tokens": 64,
+      "original": 3.8299942949426318,
+      "previous": 3.837522670278352,
+      "current": 3.9733241617930517,
+      "current_vs_previous_percent": 3.538780176244516,
+      "previous_vs_original_percent": 0.1965636174879215,
+      "current_vs_original_percent": 3.742299748061817,
+      "paired_current_vs_previous": [
+        2.861696869763719,
+        4.841484094710258,
+        2.922318783631561
+      ]
+    }
+  ],
+  "major_faults": 2,
+  "max_swap_kib": 0,
+  "max_rss_kib": 2646160,
+  "validation": "All logits bit-exact across original, v0.1.1 and v0.1.2 and repetitions; first 16 steps match across sample lengths"
+}

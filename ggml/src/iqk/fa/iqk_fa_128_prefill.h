@@ -22,6 +22,9 @@ void iqk_pi5_prefill_128(int nq, int nk, int stride_q, int stride_k, int stride_
     // Scores are consumed before advancing to another group. M/S and value
     // accumulators persist per group; their arithmetic order is unchanged.
     alignas(64) float scores[Q*K];
+    // Softmax writes the value kernel's FP16 inputs directly. The FP32
+    // denominator is unchanged; no intermediate FP32 weight stores are needed.
+    alignas(64) float16_t weights[Q*K];
     const int kv_head = ith/2;
     const int first_head = kv_head*8 + (ith%2)*G;
     for (int row = 0; row < nq; row += Q) {
@@ -43,9 +46,9 @@ void iqk_pi5_prefill_128(int nq, int nk, int stride_q, int stride_k, int stride_
                 float32x4_t vk[K/4];
                 const char * row_mask = (const char *)mask + group.row*stride_m + key*sizeof(ggml_fp16_t);
                 for (int j = 0; j < Q; ++j) {
-                    pi5_update_softmax_128(group.ms, j, vk, row_mask + stride_m*j);
+                    pi5_update_softmax_weights_128(group.ms, j, vk, row_mask + stride_m*j, weights + K*j);
                 }
-                pi5_accumulate_values_registers_128(group.values.qkv_cache, vh, group.ms);
+                pi5_accumulate_values_registers_128<true>(group.values.qkv_cache, vh, group.ms, weights);
             }
             kh.next_block(K);
             vh.next_block(K);
